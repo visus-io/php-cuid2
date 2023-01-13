@@ -45,7 +45,11 @@ final class Cuid2
 
         $this->timestamp = (int)(microtime(true) * 1000);
         $this->random = unpack('C*', random_bytes(32));
-        $this->fingerprint = self::generateFingerprint();
+
+        $this->fingerprint = unpack(
+            'C*',
+            hash('sha3-512', random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063 . serialize($_SERVER))
+        );
 
         $this->length = $maxLength;
     }
@@ -64,38 +68,5 @@ final class Cuid2
         $result = base_convert(hash_final($hash), 16, 36);
 
         return $this->prefix . substr($result, 0, $this->length - 1);
-    }
-
-    private static function generateFingerprint(): array
-    {
-        $system = unpack('C*', self::retrieveSystemName());
-        $process = unpack('C*', (string)getmypid());
-
-        $bytes = array_merge($system, $process);
-
-        if (count($bytes) > 32) {
-            $bytes = array_slice($bytes, 0, 32);
-        }
-
-        $diff = 32 - count($bytes);
-
-        $salt = unpack('C*', random_bytes($diff));
-
-        return array_merge($bytes, $salt);
-    }
-
-    private static function retrieveSystemName(): string
-    {
-        if (!($machineName = gethostname())) {
-            $machineName = self::generateSystemName();
-        }
-
-        return $machineName;
-    }
-
-    private static function generateSystemName(): string
-    {
-        $name = bin2hex(random_bytes(24));
-        return strtoupper(substr($name, 0, 15));
     }
 }

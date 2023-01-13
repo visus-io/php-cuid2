@@ -11,7 +11,7 @@ final class Counter
 
     private function __construct()
     {
-        $this->value = (int)ceil(random_int(1, PHP_INT_MAX) * 2057);
+        $this->value = random_int(PHP_INT_MIN, PHP_INT_MAX) * 2057;
     }
 
     public static function getInstance(): static

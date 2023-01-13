@@ -33,6 +33,6 @@ class Cuid2Test extends TestCase
     {
         $this->expectException(OutOfRangeException::class);
 
-        new Cuid2(48);
+        $_ = new Cuid2(48);
     }
 }
