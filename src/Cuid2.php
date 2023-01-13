@@ -40,7 +40,7 @@ final class Cuid2
 
         $this->counter = Counter::getInstance()->getNextValue();
 
-        $this->prefix = chr(rand(97,122));
+        $this->prefix = chr(rand(97, 122));
         $this->salt = unpack('C*', random_bytes(32));
 
         $this->timestamp = (int)(microtime(true) * 1000);

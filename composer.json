@@ -18,7 +18,8 @@
     "require-dev": {
         "ext-ctype": "*",
         "ergebnis/composer-normalize": "^2.29",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "squizlabs/php_codesniffer": "^3.7"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
