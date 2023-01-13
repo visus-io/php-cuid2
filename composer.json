@@ -1,0 +1,44 @@
+{
+    "name": "xaevik/cuid2",
+    "license": "Apache-2.0",
+    "type": "library",
+    "keywords": [
+        "cuid",
+        "identifier"
+    ],
+    "authors": [
+        {
+            "name": "Alan Brault",
+            "email": "alan.brault@visus.io"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "ext-gmp": "*"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.29",
+        "phpunit/phpunit": "^9.5",
+        "ext-ctype": "*"
+    },
+    "suggest": {
+        "ext-openssl": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Xaevik\\Cuid2\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Xaevik\\Cuid2\\Test\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true
+        }
+    }
+}
