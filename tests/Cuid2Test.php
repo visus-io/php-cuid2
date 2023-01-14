@@ -9,7 +9,7 @@ use Xaevik\Cuid2\Cuid2;
 
 class Cuid2Test extends TestCase
 {
-    public function testDefaultConstructor()
+    public function testDefaultConstructor(): void
     {
         $cuid = new Cuid2();
 
@@ -19,7 +19,7 @@ class Cuid2Test extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testVariableLengthConstructor()
+    public function testVariableLengthConstructor(): void
     {
         $cuid = new Cuid2(10);
 
@@ -29,7 +29,7 @@ class Cuid2Test extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testConstructorThrowsOutOfRangeException()
+    public function testConstructorThrowsOutOfRangeException(): void
     {
         $this->expectException(OutOfRangeException::class);
 

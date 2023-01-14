@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Xaevik\Cuid2;
@@ -6,9 +7,6 @@ namespace Xaevik\Cuid2;
 use Exception;
 use OutOfRangeException;
 
-/**
- * Represents a collision resistant unique identifier
- */
 final class Cuid2
 {
     private readonly int $counter;
@@ -28,9 +26,9 @@ final class Cuid2
     /**
      * Initializes a new instance of Cuid2.
      *
-     * @param int $maxLength The length of the CUIDv2 value that should be returned.
+     * @param int $maxLength The maximum string length value of the CUID.
      * @throws OutOfRangeException The value of $maxLength was less than 4 or greater than 32.
-     * @throws Exception An underlying exception occurred.
+     * @throws Exception
      */
     public function __construct(int $maxLength = 24)
     {
@@ -38,20 +36,34 @@ final class Cuid2
             throw new OutOfRangeException("maxLength: cannot be less than 4 or greater than 32.");
         }
 
+        $this->length = $maxLength;
         $this->counter = Counter::getInstance()->getNextValue();
 
         $this->prefix = chr(rand(97, 122));
-        $this->salt = unpack('C*', random_bytes(32));
+        $this->salt = self::generateRandom();
 
         $this->timestamp = (int)(microtime(true) * 1000);
-        $this->random = unpack('C*', random_bytes(32));
+        $this->random = self::generateRandom();
+        $this->fingerprint = self::generateFingerprint();
+    }
 
-        $this->fingerprint = unpack(
+    /**
+     * @throws Exception
+     */
+    private static function generateFingerprint(): array
+    {
+        return unpack(
             'C*',
             hash('sha3-512', random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063 . serialize($_SERVER))
         );
+    }
 
-        $this->length = $maxLength;
+    /**
+     * @throws Exception
+     */
+    private static function generateRandom(): array
+    {
+        return unpack('C*', random_bytes(32));
     }
 
     public function __toString(): string
