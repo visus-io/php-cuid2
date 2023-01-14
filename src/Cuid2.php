@@ -11,14 +11,23 @@ final class Cuid2
 {
     private readonly int $counter;
 
+    /**
+     * @var array<array-key, mixed>
+     */
     private readonly array $fingerprint;
 
     private readonly int $length;
 
     private readonly string $prefix;
 
+    /**
+     * @var array<array-key, mixed>
+     */
     private readonly array $random;
 
+    /**
+     * @var array<array-key, mixed>
+     */
     private readonly array $salt;
 
     private readonly int $timestamp;
@@ -26,7 +35,7 @@ final class Cuid2
     /**
      * Initializes a new instance of Cuid2.
      *
-     * @param int $maxLength The maximum string length value of the CUID.
+     * @param  int $maxLength The maximum string length value of the CUID.
      * @throws OutOfRangeException The value of $maxLength was less than 4 or greater than 32.
      * @throws Exception
      */
@@ -48,22 +57,28 @@ final class Cuid2
     }
 
     /**
+     * @return array<array-key, mixed>
      * @throws Exception
      */
     private static function generateFingerprint(): array
     {
-        return unpack(
+        $result = unpack(
             'C*',
             hash('sha3-512', random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063 . serialize($_SERVER))
         );
+
+        return !$result ? [] : $result;
     }
 
     /**
+     * @return array<array-key, mixed>
      * @throws Exception
      */
     private static function generateRandom(): array
     {
-        return unpack('C*', random_bytes(32));
+        $result = unpack('C*', random_bytes(32));
+
+        return !$result ? [] : $result;
     }
 
     public function __toString(): string
