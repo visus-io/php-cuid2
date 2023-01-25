@@ -19,8 +19,9 @@ final class Fingerprint
     /**
      * @var array<array-key, mixed>
      * @psalm-readonly-allow-private-mutation
+     * @readonly
      */
-    private readonly array $value;
+    private array $value;
 
     /**
      * @throws Exception
@@ -93,19 +94,30 @@ final class Fingerprint
     {
         $random = bin2hex(random_bytes(8));
 
-        /** @var string $host */
-        $host = $this->getRemoteHostAddr() ?: gethostname() ?: bin2hex(random_bytes(4));
-        $process = (string)(getmygid() ?: random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063);
+        if (function_exists('gethostname')) {
+            $host = $this->getRemoteHostAddr() ?: gethostname() ?: bin2hex(random_bytes(4));
+        } else {
+            $host = $this->getRemoteHostAddr() ?: bin2hex(random_bytes(4));
+        }
+
+        if (function_exists('getmypid')) {
+            $process = (string)(getmypid() ?: random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063);
+        } else {
+            $process = (string)random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063;
+        }
 
         $hash = hash_init('sha3-512');
 
         hash_update($hash, $random);
+
+        /** @var string $host */
         hash_update($hash, $host);
+
+        /** @var string $process */
         hash_update($hash, $process);
 
         $result = unpack('C*', hash_final($hash));
 
         return !$result ? [] : $result;
     }
-
 }
