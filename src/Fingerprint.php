@@ -103,7 +103,7 @@ final class Fingerprint
         if (function_exists('getmypid')) {
             $process = (string)(getmypid() ?: random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063);
         } else {
-            $process = (string)random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063;
+            $process = (string)(random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063);
         }
 
         $hash = hash_init('sha3-512');
