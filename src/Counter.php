@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Xaevik\Cuid2;
 
 /**
- * Singleton responsible for keep track of iterations.
+ * Singleton responsible for keeping track of iterations.
  *
  * @internal
  * @psalm-internal Xaevik\Cuid2
