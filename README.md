@@ -2,7 +2,7 @@
 
 ![GitHub](https://img.shields.io/github/license/xaevik/php-cuid2?logo=github) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=alert_status)](https://sonarcloud.io/summary/overall?id=php-cuid2) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=coverage)](https://sonarcloud.io/summary/overall?id=php-cuid2) ![TypeCoverage](https://shepherd.dev/github/xaevik/php-cuid2/coverage.svg) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=security_rating)](https://sonarcloud.io/summary/overall?id=php-cuid2)
 
-[![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/xaevik/cuid2?include_prereleases)](https://packagist.org/packages/xaevik/cuid2) [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/xaevik/cuid2)](https://packagist.org/packages/xaevik/cuid2) ![Packagist Downloads](https://img.shields.io/packagist/dt/xaevik/cuid2)
+[![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/xaevik/cuid2?include_prereleases)](https://packagist.org/packages/xaevik/cuid2) [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/xaevik/cuid2)](https://packagist.org/packages/xaevik/cuid2)
 
 A PHP implementation of collision-resistant ids. You can read more about CUIDs from the [official project website](https://github.com/paralleldrive/cuid2).
 
