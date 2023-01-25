@@ -25,6 +25,9 @@
         "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^5.4"
     },
+    "suggest": {
+        "ext-gmp": "*"
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {

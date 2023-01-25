@@ -16,6 +16,9 @@ final class Cuid2
      */
     private readonly array $fingerprint;
 
+    /**
+     * @var int<1, max>
+     */
     private readonly int $length;
 
     private readonly string $prefix;
@@ -62,21 +65,68 @@ final class Cuid2
      */
     private static function generateFingerprint(): array
     {
-        $result = unpack(
-            'C*',
-            hash('sha3-512', random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063 . serialize($_SERVER))
-        );
+        $random = bin2hex(random_bytes(8));
+
+        /** @var string $host */
+        $host = self::getRemoteHostAddr() ?: gethostname() ?: bin2hex(random_bytes(4));
+        $process = (string)(getmygid() ?: random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063);
+
+        $hash = hash_init('sha3-512');
+
+        hash_update($hash, $random);
+        hash_update($hash, $host);
+        hash_update($hash, $process);
+
+        $result = unpack('C*', hash_final($hash));
 
         return !$result ? [] : $result;
+    }
+
+    private static function getRemoteHostAddr(): string|bool
+    {
+        $fields = [
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_FORWARDED',
+            'HTTP_X_COMING_FROM',
+            'HTTP_FORWARDED_FOR',
+            'HTTP_CLIENT_IP',
+            'HTTP_VIA',
+            'HTTP_XROXY_CONNECTION',
+            'HTTP_PROXY_CONNECTION',
+            'REMOTE_ADDR'
+        ];
+
+        $addresses = [];
+
+        foreach ($fields as $field) {
+            if (empty($_SERVER[$field])) {
+                continue;
+            }
+
+            /** @var string|bool $result */
+            $result = filter_var(
+                $_SERVER[$field],
+                FILTER_VALIDATE_IP,
+                FILTER_FLAG_NO_PRIV_RANGE
+            );
+
+            if (!$result) {
+                continue;
+            }
+
+            $addresses[] = $result;
+        }
+
+        return reset($addresses);
     }
 
     /**
      * @return array<array-key, mixed>
      * @throws Exception
      */
-    private static function generateRandom(): array
+    private function generateRandom(): array
     {
-        $result = unpack('C*', random_bytes(32));
+        $result = unpack('C*', random_bytes($this->length));
 
         return !$result ? [] : $result;
     }
@@ -92,7 +142,13 @@ final class Cuid2
         hash_update($hash, bin2hex(pack('C*', ...$this->fingerprint)));
         hash_update($hash, bin2hex(pack('C*', ...$this->salt)));
 
-        $result = base_convert(hash_final($hash), 16, 36);
+        $hash = hash_final($hash);
+
+        if (extension_loaded('gmp')) {
+            $result = gmp_strval(gmp_init($hash, 16), 36);
+        } else {
+            $result = base_convert($hash, 16, 36);
+        }
 
         return $this->prefix . substr($result, 0, $this->length - 1);
     }
