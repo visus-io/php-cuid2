@@ -9,31 +9,38 @@ use OutOfRangeException;
 
 final class Cuid2
 {
-    private readonly int $counter;
+    /** @readonly */
+    private int $counter;
 
     /**
      * @var array<array-key, mixed>
+     * @readonly
      */
-    private readonly array $fingerprint;
+    private array $fingerprint;
 
     /**
      * @var int<1, max>
+     * @readonly
      */
-    private readonly int $length;
+    private int $length;
 
-    private readonly string $prefix;
+    /** @readonly */
+    private string $prefix;
 
     /**
      * @var array<array-key, mixed>
+     * @readonly
      */
-    private readonly array $random;
+    private array $random;
 
     /**
      * @var array<array-key, mixed>
+     * @readonly
      */
-    private readonly array $salt;
+    private array $salt;
 
-    private readonly int $timestamp;
+    /** @readonly */
+    private int $timestamp;
 
     /**
      * Initializes a new instance of Cuid2.
