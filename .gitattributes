@@ -1,0 +1,14 @@
+/.editorconfig              export-ignore
+/.gitattributes             export-ignore
+/.github/                   export-ignore
+/.gitignore                 export-ignore
+/build/                     export-ignore
+/composer.lock              export-ignore
+/phpcs.xml.dist             export-ignore
+/phpstan.neon               export-ignore
+/phpunit.xml.dist           export-ignore
+/psalm.xml                  export-ignore
+/renovate.json              export-ignore
+/SECURITY.md                export-ignore
+/sonar-project.properties   export-ignore
+/tests/                     export-ignore
