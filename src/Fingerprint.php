@@ -14,7 +14,8 @@ use Exception;
  */
 final class Fingerprint
 {
-    private static self|null $instance = null;
+    /** @var ?Fingerprint */
+    private static ?Fingerprint $instance = null;
 
     /**
      * @var array<array-key, mixed>
@@ -48,7 +49,10 @@ final class Fingerprint
         return $this->value;
     }
 
-    private function getRemoteHostAddr(): string|bool
+    /**
+     * @return string|bool
+     */
+    private function getRemoteHostAddr()
     {
         $fields = [
             'HTTP_X_FORWARDED_FOR',
@@ -113,7 +117,6 @@ final class Fingerprint
         /** @var string $host */
         hash_update($hash, $host);
 
-        /** @var string $process */
         hash_update($hash, $process);
 
         $result = unpack('C*', hash_final($hash));

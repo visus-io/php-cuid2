@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xaevik\Cuid2;
 
+use Exception;
+
 /**
  * Singleton responsible for keeping track of iterations.
  *
@@ -12,13 +14,19 @@ namespace Xaevik\Cuid2;
  */
 final class Counter
 {
-    private static self|null $instance = null;
+    /**
+     * @var Counter|null
+     */
+    private static ?Counter $instance = null;
 
     /**
      * @psalm-readonly-allow-private-mutation
      */
     private int $value;
 
+    /**
+     * @throws Exception
+     */
     private function __construct()
     {
         $this->value = (int)(random_int(PHP_INT_MIN, PHP_INT_MAX) * 2057);
