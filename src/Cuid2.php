@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Xaevik\Cuid2;
 
 use Exception;
+use JsonSerializable;
 use OutOfRangeException;
 
-final class Cuid2
+final class Cuid2 implements JsonSerializable
 {
     /** @readonly */
     private int $counter;
@@ -78,6 +79,11 @@ final class Cuid2
         return !$result ? [] : $result;
     }
 
+    public function toString(): string
+    {
+        return $this->__toString();
+    }
+
     public function __toString(): string
     {
         $hash = hash_init('sha3-512');
@@ -98,5 +104,13 @@ final class Cuid2
         }
 
         return $this->prefix . substr($result, 0, $this->length - 1);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->toString();
     }
 }

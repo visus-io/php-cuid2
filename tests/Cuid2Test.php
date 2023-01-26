@@ -36,4 +36,16 @@ class Cuid2Test extends TestCase
 
         $_ = new Cuid2(48);
     }
+
+    public function testExplicitToString(): void
+    {
+        $cuid = new Cuid2();
+
+        $value = $cuid->toString();
+
+        $result = strlen($value) === 24 &&
+            ctype_alnum($value);
+
+        $this->assertTrue($result);
+    }
 }
