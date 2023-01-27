@@ -67,6 +67,10 @@ final class Cuid2 implements JsonSerializable
         $this->fingerprint = Fingerprint::getInstance()->getValue();
     }
 
+    public function __toString(): string
+    {
+        return $this->render();
+    }
 
     /**
      * @return array<array-key, mixed>
@@ -81,10 +85,18 @@ final class Cuid2 implements JsonSerializable
 
     public function toString(): string
     {
-        return $this->__toString();
+        return $this->render();
     }
 
-    public function __toString(): string
+    /**
+     * @inheritdoc
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->render();
+    }
+
+    private function render(): string
     {
         $hash = hash_init('sha3-512');
 
@@ -104,13 +116,5 @@ final class Cuid2 implements JsonSerializable
         }
 
         return $this->prefix . substr($result, 0, $this->length - 1);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function jsonSerialize(): string
-    {
-        return $this->toString();
     }
 }

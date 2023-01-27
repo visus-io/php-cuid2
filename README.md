@@ -18,9 +18,6 @@ composer require xaevik/cuid2
 
 ```php
 <?php
-
-declare(strict_types=1);
-
 require_once 'vendor/autoload.php';
 
 // new (default length of 24)
@@ -31,7 +28,7 @@ echo (string)$cuid; // hw8kkckkgwkk0oo0gkw0o8sg
 $cuid = new Xaevik\Cuid2\Cuid2(10);
 echo (string)$cuid; // psk8844ck4
 
-// toString() call
+// new (explicit casting)
 $cuid = new Xaevik\Cuid2\Cuid2();
-echo $cuid->toString(); // iqdizzredw2uibe2anrijgv8
+echo $cuid->toString(); // i9co6hxidmgekvrn4tux0f2g
 ```
