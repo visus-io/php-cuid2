@@ -22,13 +22,14 @@ require_once 'vendor/autoload.php';
 
 // new (default length of 24)
 $cuid = new Xaevik\Cuid2\Cuid2();
-echo (string)$cuid; // hw8kkckkgwkk0oo0gkw0o8sg
+
+// implicit casting
+echo $cuid; // hw8kkckkgwkk0oo0gkw0o8sg
+
+// explicit casting
+echo $cuid->toString(); // hw8kkckkgwkk0oo0gkw0o8sg
 
 // new (with custom length)
 $cuid = new Xaevik\Cuid2\Cuid2(10);
-echo (string)$cuid; // psk8844ck4
-
-// new (explicit casting)
-$cuid = new Xaevik\Cuid2\Cuid2();
-echo $cuid->toString(); // i9co6hxidmgekvrn4tux0f2g
+echo $cuid; // psk8844ck4
 ```

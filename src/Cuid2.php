@@ -59,7 +59,7 @@ final class Cuid2 implements JsonSerializable
         $this->length = $maxLength;
         $this->counter = Counter::getInstance()->getNextValue();
 
-        $this->prefix = chr(rand(97, 122));
+        $this->prefix = chr(random_int(97, 122));
         $this->salt = self::generateRandom();
 
         $this->timestamp = (int)(microtime(true) * 1000);
