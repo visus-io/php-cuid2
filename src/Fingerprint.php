@@ -74,11 +74,7 @@ final class Fingerprint
             }
 
             /** @var string|bool $result */
-            $result = filter_var(
-                $_SERVER[$field],
-                FILTER_VALIDATE_IP,
-                FILTER_FLAG_NO_PRIV_RANGE
-            );
+            $result = filter_var($_SERVER[$field], FILTER_VALIDATE_IP);
 
             if (!$result) {
                 continue;
