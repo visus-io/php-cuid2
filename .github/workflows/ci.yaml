@@ -80,7 +80,7 @@ jobs:
           composer normalize --dry-run
           composer validate
       - name: PHPUnit
-        run: vendor/bin/phpunit --verbose --colors=always --coverage-text --coverage-clover build/logs/coverage.xml
+        run: vendor/bin/phpunit --colors=always --coverage-text --coverage-clover build/logs/coverage.xml
       - name: SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
         env:
