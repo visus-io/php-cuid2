@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
-         cacheResultFile="./build/cache/phpunit.result.cache"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
          colors="true"
-         verbose="true">
-    <testsuites>
-        <testsuite name="unit-tests">
-            <directory>./tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./src</directory>
-        </include>
-    </coverage>
-
-    <php>
-        <!-- E_ALL & ~E_DEPRECATED -->
-        <ini name="error_reporting" value="24575"/>
-    </php>
-
+         cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="unit-tests">
+      <directory>./tests</directory>
+    </testsuite>
+  </testsuites>
+  <coverage>
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+  </coverage>
+  <php>
+    <!-- E_ALL & ~E_DEPRECATED -->
+    <ini name="error_reporting" value="24575"/>
+  </php>
 </phpunit>

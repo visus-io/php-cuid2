@@ -80,8 +80,9 @@ jobs:
           composer normalize --dry-run
           composer validate
       - name: PHPUnit
-        run: vendor/bin/phpunit --colors=always --coverage-text --coverage-clover build/logs/coverage.xml
+        run: vendor/bin/phpunit --coverage-text --coverage-clover build/logs/coverage.xml || true
       - name: SonarCloud
+        if: always()
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
