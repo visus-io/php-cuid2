@@ -14,7 +14,8 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0"
+        "php": "^7.4 || ^8.0",
+        "paragonie/random_compat": ">=2"
     },
     "require-dev": {
         "ext-ctype": "*",
@@ -33,7 +34,10 @@
     "autoload": {
         "psr-4": {
             "Xaevik\\Cuid2\\": "src/"
-        }
+        },
+        "files": [
+            "src/compat.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
