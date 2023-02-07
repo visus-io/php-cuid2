@@ -77,7 +77,7 @@ jobs:
           composer normalize --dry-run
           composer validate
       - name: PHPStan
-        run: composer phpstan -- --ansi
+        run: composer phpstan -- --ansi --xdebug
       - name: Psalm
         run: composer psalm -- --shepherd
 

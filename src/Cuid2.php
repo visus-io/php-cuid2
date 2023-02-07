@@ -34,12 +34,6 @@ final class Cuid2 implements JsonSerializable
      */
     private array $random;
 
-    /**
-     * @var array<array-key, mixed>
-     * @readonly
-     */
-    private array $salt;
-
     /** @readonly */
     private int $timestamp;
 
@@ -59,12 +53,10 @@ final class Cuid2 implements JsonSerializable
         $this->length = $maxLength;
         $this->counter = Counter::getInstance()->getNextValue();
 
-        $this->prefix = chr(random_int(97, 122));
-        $this->salt = self::generateRandom();
-
-        $this->timestamp = (int)(microtime(true) * 1000);
-        $this->random = self::generateRandom();
         $this->fingerprint = Fingerprint::getInstance()->getValue();
+        $this->prefix = chr(random_int(97, 122));
+        $this->random = self::generateRandom();
+        $this->timestamp = (int)(microtime(true) * 1000);
     }
 
     public function __toString(): string
@@ -78,7 +70,7 @@ final class Cuid2 implements JsonSerializable
      */
     private function generateRandom(): array
     {
-        $result = unpack('C*', random_bytes($this->length));
+        $result = unpack('C*', random_bytes($this->length * 2));
 
         return !$result ? [] : $result;
     }
@@ -105,7 +97,6 @@ final class Cuid2 implements JsonSerializable
 
         hash_update($hash, bin2hex(pack('C*', ...$this->random)));
         hash_update($hash, bin2hex(pack('C*', ...$this->fingerprint)));
-        hash_update($hash, bin2hex(pack('C*', ...$this->salt)));
 
         $hash = hash_final($hash);
 

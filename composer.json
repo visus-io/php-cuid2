@@ -33,7 +33,10 @@
     "autoload": {
         "psr-4": {
             "Xaevik\\Cuid2\\": "src/"
-        }
+        },
+        "files": [
+            "src/compat.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

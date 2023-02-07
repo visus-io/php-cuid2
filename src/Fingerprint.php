@@ -93,18 +93,8 @@ final class Fingerprint
     private function generateFingerprint(): array
     {
         $random = bin2hex(random_bytes(8));
-
-        if (function_exists('gethostname')) {
-            $host = $this->getRemoteHostAddr() ?: gethostname() ?: bin2hex(random_bytes(4));
-        } else {
-            $host = $this->getRemoteHostAddr() ?: bin2hex(random_bytes(4));
-        }
-
-        if (function_exists('getmypid')) {
-            $process = (string)(getmypid() ?: random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063);
-        } else {
-            $process = (string)(random_int(PHP_INT_MIN, PHP_INT_MAX) * 2063);
-        }
+        $host = $this->getRemoteHostAddr() ?: gethostname() ?: bin2hex(random_bytes(4));
+        $process = (string)(getmypid() ?: random_int(1, 32768));
 
         $hash = hash_init('sha3-512');
 
