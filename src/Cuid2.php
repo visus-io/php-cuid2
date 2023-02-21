@@ -70,7 +70,7 @@ final class Cuid2 implements JsonSerializable
      */
     private function generateRandom(): array
     {
-        $result = unpack('C*', random_bytes($this->length * 2));
+        $result = unpack('C*', random_bytes($this->length));
 
         return !$result ? [] : $result;
     }

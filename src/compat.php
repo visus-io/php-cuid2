@@ -10,6 +10,6 @@ if (!is_callable('getmypid')) {
 if (!is_callable('gethostname')) {
     function gethostname(): string
     {
-        return substr(str_shuffle('abcdefghjkmnpqrstvwxyz0123456789'), 0, 15);
+        return substr(str_shuffle('abcdefghjkmnpqrstvwxyz0123456789'), 0, 32);
     }
 }
