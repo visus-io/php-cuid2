@@ -1,14 +1,14 @@
-# xaevik/cuid2
+# visus/cuid2
 
-![GitHub](https://img.shields.io/github/license/xaevik/php-cuid2?logo=github) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=alert_status)](https://sonarcloud.io/summary/overall?id=php-cuid2) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=coverage)](https://sonarcloud.io/summary/overall?id=php-cuid2) ![TypeCoverage](https://shepherd.dev/github/xaevik/php-cuid2/coverage.svg) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=security_rating)](https://sonarcloud.io/summary/overall?id=php-cuid2)
+![GitHub](https://img.shields.io/github/license/visus/php-cuid2?logo=github) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=alert_status)](https://sonarcloud.io/summary/overall?id=php-cuid2) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=coverage)](https://sonarcloud.io/summary/overall?id=php-cuid2) ![TypeCoverage](https://shepherd.dev/github/visus/php-cuid2/coverage.svg) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=security_rating)](https://sonarcloud.io/summary/overall?id=php-cuid2)
 
-[![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/xaevik/cuid2?include_prereleases)](https://packagist.org/packages/xaevik/cuid2) [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/xaevik/cuid2)](https://packagist.org/packages/xaevik/cuid2)
+[![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/visus/cuid2?include_prereleases)](https://packagist.org/packages/visus/cuid2) [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/visus/cuid2)](https://packagist.org/packages/visus/cuid2)
 
 A PHP implementation of collision-resistant ids. You can read more about CUIDs from the [official project website](https://github.com/paralleldrive/cuid2).
 
 ## Getting Started
 
-You can install xaevik/cuid2 as a [composer package](https://packagist.org/packages/xaevik/cuid2):
+You can install visus/cuid2 as a [composer package](https://packagist.org/packages/visus/cuid2):
 
 ```shell
 composer require visus/cuid2
