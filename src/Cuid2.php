@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xaevik\Cuid2;
+namespace Visus\Cuid2;
 
 use Exception;
 use JsonSerializable;

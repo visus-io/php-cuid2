@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xaevik\Cuid2;
+namespace Visus\Cuid2;
 
 use Exception;
 
@@ -10,7 +10,7 @@ use Exception;
  * Singleton responsible for keeping track of iterations.
  *
  * @internal
- * @psalm-internal Xaevik\Cuid2
+ * @psalm-internal Visus\Cuid2
  */
 final class Counter
 {

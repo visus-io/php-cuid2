@@ -11,7 +11,7 @@ A PHP implementation of collision-resistant ids. You can read more about CUIDs f
 You can install xaevik/cuid2 as a [composer package](https://packagist.org/packages/xaevik/cuid2):
 
 ```shell
-composer require xaevik/cuid2
+composer require visus/cuid2
 ```
 
 ## Quick Example
@@ -21,7 +21,7 @@ composer require xaevik/cuid2
 require_once 'vendor/autoload.php';
 
 // new (default length of 24)
-$cuid = new Xaevik\Cuid2\Cuid2();
+$cuid = new Visus\Cuid2\Cuid2();
 
 // implicit casting
 echo $cuid; // hw8kkckkgwkk0oo0gkw0o8sg
@@ -30,6 +30,6 @@ echo $cuid; // hw8kkckkgwkk0oo0gkw0o8sg
 echo $cuid->toString(); // hw8kkckkgwkk0oo0gkw0o8sg
 
 // new (with custom length)
-$cuid = new Xaevik\Cuid2\Cuid2(10);
+$cuid = new Visus\Cuid2\Cuid2(10);
 echo $cuid; // psk8844ck4
 ```

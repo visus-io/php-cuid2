@@ -1,5 +1,5 @@
 {
-    "name": "xaevik/cuid2",
+    "name": "visus/cuid2",
     "description": "A PHP library for generating collision-resistant ids (CUIDs).",
     "license": "Apache-2.0",
     "type": "library",
@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0"
+        "php": "^8.0"
     },
     "require-dev": {
         "ext-ctype": "*",
@@ -32,7 +32,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Xaevik\\Cuid2\\": "src/"
+            "Visus\\Cuid2\\": "src/"
         },
         "files": [
             "src/compat.php"
@@ -40,7 +40,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Xaevik\\Cuid2\\Test\\": "tests/"
+            "Visus\\Cuid2\\Test\\": "tests/"
         }
     },
     "config": {
