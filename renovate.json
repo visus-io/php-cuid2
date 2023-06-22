@@ -20,13 +20,16 @@
 			],
 			"matchUpdateTypes": [
 				"minor",
-				"patch"
+				"patch",
+				"digest"
 			],
 			"groupName": "all non-major dependencies",
 			"groupSlug": "all-minor-patch",
 			"labels": [
 				"dependencies"
-			]
+			],
+			"automerge": true,
+			"automergeType": "pr"
 		},
 		{
 			"matchPackagePatterns": [
@@ -38,7 +41,8 @@
 			"labels": [
 				"dependencies",
 				"breaking"
-			]
+			],
+			"platformAutomerge": true
 		}
 	]
 }
