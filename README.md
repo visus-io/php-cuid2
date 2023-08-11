@@ -1,8 +1,13 @@
 # visus/cuid2
 
-![GitHub](https://img.shields.io/github/license/visus-io/php-cuid2?logo=github) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=alert_status)](https://sonarcloud.io/summary/overall?id=php-cuid2) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=coverage)](https://sonarcloud.io/summary/overall?id=php-cuid2) ![TypeCoverage](https://shepherd.dev/github/visus-io/php-cuid2/coverage.svg) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=php-cuid2&metric=security_rating)](https://sonarcloud.io/summary/overall?id=php-cuid2)
+[![Continuous Integration](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml/badge.svg)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f3aa91cf90a44d1cb372ef4aa85442bd)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-[![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/visus/cuid2?include_prereleases)](https://packagist.org/packages/visus/cuid2) [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/visus/cuid2)](https://packagist.org/packages/visus/cuid2)
+[![Latest Stable Version](http://poser.pugx.org/visus/cuid2/v)](https://packagist.org/packages/visus/cuid2)
+[![Total Downloads](http://poser.pugx.org/visus/cuid2/downloads)](https://packagist.org/packages/visus/cuid2)
+[![License](http://poser.pugx.org/visus/cuid2/license)](https://packagist.org/packages/visus/cuid2)
+[![PHP Version Require](http://poser.pugx.org/visus/cuid2/require/php)](https://packagist.org/packages/visus/cuid2)
+![TypeCoverage](https://shepherd.dev/github/visus-io/php-cuid2/coverage.svg)
 
 A PHP implementation of collision-resistant ids. You can read more about CUIDs from the [official project website](https://github.com/paralleldrive/cuid2).
 
