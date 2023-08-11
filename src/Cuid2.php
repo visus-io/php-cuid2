@@ -100,11 +100,9 @@ final class Cuid2 implements JsonSerializable
 
         $hash = hash_final($hash);
 
-        if (extension_loaded('gmp')) {
-            $result = gmp_strval(gmp_init($hash, 16), 36);
-        } else {
-            $result = base_convert($hash, 16, 36);
-        }
+        $result = extension_loaded('gmp')
+            ? gmp_strval(gmp_init($hash, 16), 36)
+            : base_convert($hash, 16, 36);
 
         return $this->prefix . substr($result, 0, $this->length - 1);
     }
