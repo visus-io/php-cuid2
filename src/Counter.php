@@ -14,9 +14,6 @@ use Exception;
  */
 final class Counter
 {
-    /**
-     * @var Counter|null
-     */
     private static ?Counter $instance = null;
 
     /**
@@ -32,6 +29,11 @@ final class Counter
         $this->value = (int)(random_int(PHP_INT_MIN, PHP_INT_MAX) * 476782367);
     }
 
+    /**
+     * Gets the current instance.
+     *
+     * @return Counter
+     */
     public static function getInstance(): Counter
     {
         if (is_null(self::$instance)) {
@@ -41,6 +43,11 @@ final class Counter
         return self::$instance;
     }
 
+    /**
+     * Gets the next value from the current instance.
+     *
+     * @return int
+     */
     public function getNextValue(): int
     {
         return $this->value++;
