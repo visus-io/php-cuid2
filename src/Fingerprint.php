@@ -14,15 +14,12 @@ use Exception;
  */
 final class Fingerprint
 {
-    /** @var ?Fingerprint */
     private static ?Fingerprint $instance = null;
 
     /**
      * @var array<array-key, mixed>
-     * @psalm-readonly-allow-private-mutation
-     * @readonly
      */
-    private array $value;
+    private readonly array $value;
 
     /**
      * @throws Exception
@@ -32,6 +29,11 @@ final class Fingerprint
         $this->value = $this->generateFingerprint();
     }
 
+    /**
+     * Gets the current instance.
+     *
+     * @return Fingerprint
+     */
     public static function getInstance(): Fingerprint
     {
         if (is_null(self::$instance)) {
@@ -42,6 +44,8 @@ final class Fingerprint
     }
 
     /**
+     * Gets the value from the instance.
+     *
      * @return array<array-key, mixed>
      */
     public function getValue(): array
@@ -49,10 +53,7 @@ final class Fingerprint
         return $this->value;
     }
 
-    /**
-     * @return string|bool
-     */
-    private function getRemoteHostAddr()
+    private function getRemoteHostAddr(): bool|string
     {
         $fields = [
             'HTTP_X_FORWARDED_FOR',
@@ -73,7 +74,6 @@ final class Fingerprint
                 continue;
             }
 
-            /** @var string|bool $result */
             $result = filter_var($_SERVER[$field], FILTER_VALIDATE_IP);
 
             if (!$result) {

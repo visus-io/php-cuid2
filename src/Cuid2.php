@@ -10,32 +10,26 @@ use OutOfRangeException;
 
 final class Cuid2 implements JsonSerializable
 {
-    /** @readonly */
-    private int $counter;
+    private readonly int $counter;
 
     /**
      * @var array<array-key, mixed>
-     * @readonly
      */
-    private array $fingerprint;
+    private readonly array $fingerprint;
 
     /**
      * @var int<1, max>
-     * @readonly
      */
-    private int $length;
+    private readonly int $length;
 
-    /** @readonly */
-    private string $prefix;
+    private readonly string $prefix;
 
     /**
      * @var array<array-key, mixed>
-     * @readonly
      */
-    private array $random;
+    private readonly array $random;
 
-    /** @readonly */
-    private int $timestamp;
+    private readonly int $timestamp;
 
     /**
      * Initializes a new instance of Cuid2.
