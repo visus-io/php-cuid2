@@ -2,6 +2,7 @@
 
 [![Continuous Integration](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml/badge.svg)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/f3aa91cf90a44d1cb372ef4aa85442bd)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/f3aa91cf90a44d1cb372ef4aa85442bd)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
 [![Latest Stable Version](http://poser.pugx.org/visus/cuid2/v)](https://packagist.org/packages/visus/cuid2)
 [![Total Downloads](http://poser.pugx.org/visus/cuid2/downloads)](https://packagist.org/packages/visus/cuid2)
