@@ -1,7 +1,7 @@
 {
     "name": "visus/cuid2",
     "description": "A PHP library for generating collision-resistant ids (CUIDs).",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "type": "library",
     "keywords": [
         "cuid",
