@@ -1,14 +1,13 @@
 # visus/cuid2
 
-[![Continuous Integration](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml/badge.svg)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f3aa91cf90a44d1cb372ef4aa85442bd)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/f3aa91cf90a44d1cb372ef4aa85442bd)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/visus-io/php-cuid2/ci.yaml?style=for-the-badge&logo=github)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
+[![Code Quality](https://img.shields.io/codacy/grade/f3aa91cf90a44d1cb372ef4aa85442bd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard)
+[![Coverage](https://img.shields.io/codacy/coverage/f3aa91cf90a44d1cb372ef4aa85442bd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/coverage/dashboard)
 
-[![Latest Stable Version](http://poser.pugx.org/visus/cuid2/v)](https://packagist.org/packages/visus/cuid2)
-[![Total Downloads](http://poser.pugx.org/visus/cuid2/downloads)](https://packagist.org/packages/visus/cuid2)
-[![License](http://poser.pugx.org/visus/cuid2/license)](https://packagist.org/packages/visus/cuid2)
-[![PHP Version Require](http://poser.pugx.org/visus/cuid2/require/php)](https://packagist.org/packages/visus/cuid2)
-![TypeCoverage](https://shepherd.dev/github/visus-io/php-cuid2/coverage.svg)
+![PHP Version](https://img.shields.io/packagist/dependency-v/visus/cuid2/php?style=for-the-badge)
+[![Packagist](https://img.shields.io/packagist/v/visus/cuid2?style=for-the-badge&logo=packagist&logoColor=white&label=stable)](https://packagist.org/packages/visus/cuid2)
+![Downloads](https://img.shields.io/packagist/dt/visus/cuid2?style=for-the-badge&logo=packagist&logoColor=white&color=8)
+![GitHub](https://img.shields.io/github/license/visus-io/cuid.net?style=for-the-badge)
 
 A PHP implementation of collision-resistant ids. You can read more about CUIDs from the [official project website](https://github.com/paralleldrive/cuid2).
 
