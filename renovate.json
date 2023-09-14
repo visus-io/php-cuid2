@@ -6,14 +6,18 @@
 		":gitSignOff",
 		":preserveSemverRanges"
 	],
-	"automerge": true,
-	"automergeType": "pr",
-	"platformAutomerge": true,
+	"timezone": "America/New_York",
+	"schedule": [
+		"after 8am every weekday"
+	],
 	"rangeStrategy": "update-lockfile",
 	"lockFileMaintenance": {
 		"enabled": true,
-		"extends": [
-			"schedule:daily"
+		"automerge": true,
+		"automergeType": "pr",
+		"platformAutomerge": true,
+		"schedule": [
+			"before 4am"
 		]
 	},
 	"packageRules": [{
@@ -29,7 +33,10 @@
 			"groupSlug": "all-minor-patch",
 			"labels": [
 				"dependencies"
-			]
+			],
+			"automerge": true,
+			"automergeType": "pr",
+			"platformAutomerge": true
 		},
 		{
 			"matchPackagePatterns": [
@@ -42,8 +49,7 @@
 				"dependencies",
 				"breaking"
 			],
-			"automerge": false,
-			"assigneesFromCodeOwners": true
+			"automerge": false
 		}
 	]
 }
