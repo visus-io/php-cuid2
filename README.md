@@ -1,8 +1,8 @@
 # visus/cuid2
 
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/visus-io/php-cuid2/ci.yaml?style=for-the-badge&logo=github)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
-[![Code Quality](https://img.shields.io/codacy/grade/f3aa91cf90a44d1cb372ef4aa85442bd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard)
-[![Coverage](https://img.shields.io/codacy/coverage/f3aa91cf90a44d1cb372ef4aa85442bd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/coverage/dashboard)
+[![Code Quality](https://img.shields.io/codacy/grade/da334c04546d4d7381eb4e93f4ebdecd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard)
+[![Coverage](https://img.shields.io/codacy/coverage/da334c04546d4d7381eb4e93f4ebdecd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/coverage/dashboard)
 
 ![PHP Version](https://img.shields.io/packagist/dependency-v/visus/cuid2/php?style=for-the-badge)
 [![Packagist](https://img.shields.io/packagist/v/visus/cuid2?style=for-the-badge&logo=packagist&logoColor=white&label=stable)](https://packagist.org/packages/visus/cuid2)
