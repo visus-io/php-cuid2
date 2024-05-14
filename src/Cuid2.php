@@ -66,7 +66,7 @@ final class Cuid2 implements JsonSerializable
     {
         $result = unpack('C*', random_bytes($this->length));
 
-        return !$result ? [] : $result;
+        return $result === false ? [] : $result;
     }
 
     public function toString(): string

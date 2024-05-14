@@ -53,60 +53,27 @@ final class Fingerprint
         return $this->value;
     }
 
-    private function getRemoteHostAddr(): bool|string
-    {
-        $fields = [
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_COMING_FROM',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_CLIENT_IP',
-            'HTTP_VIA',
-            'HTTP_XROXY_CONNECTION',
-            'HTTP_PROXY_CONNECTION',
-            'REMOTE_ADDR'
-        ];
-
-        $addresses = [];
-
-        foreach ($fields as $field) {
-            if (empty($_SERVER[$field])) {
-                continue;
-            }
-
-            $result = filter_var($_SERVER[$field], FILTER_VALIDATE_IP);
-
-            if (!$result) {
-                continue;
-            }
-
-            $addresses[] = $result;
-        }
-
-        return reset($addresses);
-    }
-
     /**
      * @return array<array-key, mixed>
      * @throws Exception
      */
     private function generateFingerprint(): array
     {
-        $random = bin2hex(random_bytes(8));
-        $host = $this->getRemoteHostAddr() ?: gethostname() ?: bin2hex(random_bytes(4));
-        $process = (string)(getmypid() ?: random_int(1, 32768));
+        $identity = !empty(gethostname())
+            ? gethostname()
+            : substr(str_shuffle('abcdefghjkmnpqrstvwxyz0123456789'), 0, 32);
+
+        $process = (string)getmypid();
+        $random = bin2hex(random_bytes(32));
 
         $hash = hash_init('sha3-512');
 
-        hash_update($hash, $random);
-
-        /** @var string $host */
-        hash_update($hash, $host);
-
+        hash_update($hash, $identity);
         hash_update($hash, $process);
+        hash_update($hash, $random);
 
         $result = unpack('C*', hash_final($hash));
 
-        return !$result ? [] : $result;
+        return $result === false ? [] : $result;
     }
 }

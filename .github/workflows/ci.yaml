@@ -29,6 +29,7 @@ jobs:
         with:
           php-version: '8.1'
           tools: composer
+          extensions: :xdebug
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -45,7 +46,7 @@ jobs:
           composer normalize --dry-run
           composer validate
       - name: PHPStan
-        run: composer phpstan -- --ansi --xdebug
+        run: composer phpstan -- --ansi
       - name: Psalm
         run: composer psalm -- --shepherd
 
@@ -62,6 +63,7 @@ jobs:
         with:
           php-version: '8.1'
           tools: composer
+          coverage: xdebug
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
