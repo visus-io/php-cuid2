@@ -14,10 +14,8 @@
 	"lockFileMaintenance": {
 		"enabled": true,
 		"automerge": true,
-		"automergeType": "pr",
-		"platformAutomerge": true,
 		"schedule": [
-			"before 4am"
+			"after 8am every weekday"
 		]
 	},
 	"packageRules": [{
@@ -34,9 +32,7 @@
 			"labels": [
 				"dependencies"
 			],
-			"automerge": true,
-			"automergeType": "pr",
-			"platformAutomerge": true
+			"automerge": true
 		},
 		{
 			"matchPackagePatterns": [
