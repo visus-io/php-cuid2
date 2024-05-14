@@ -53,6 +53,9 @@ final class Cuid2 implements JsonSerializable
         $this->timestamp = (int)(microtime(true) * 1000);
     }
 
+    /**
+     * @throws Exception
+     */
     public function __toString(): string
     {
         return $this->render();
@@ -69,6 +72,9 @@ final class Cuid2 implements JsonSerializable
         return $result === false ? [] : $result;
     }
 
+    /**
+     * @throws Exception
+     */
     public function toString(): string
     {
         return $this->render();
@@ -76,14 +82,23 @@ final class Cuid2 implements JsonSerializable
 
     /**
      * @inheritdoc
+     * @throws Exception
      */
     public function jsonSerialize(): string
     {
         return $this->render();
     }
 
+    /**
+     * @throws Exception
+     */
     private function render(): string
     {
+        if (!in_array('sha3-512', hash_algos())) {
+            // phpcs:ignore Generic.Files.LineLength
+            throw new Exception('SHA3-512 appears to be unsupported - make sure you have support for it, or upgrade your version of PHP.');
+        }
+
         $hash = hash_init('sha3-512');
 
         hash_update($hash, (string)$this->timestamp);
