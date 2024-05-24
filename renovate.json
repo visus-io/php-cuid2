@@ -1,24 +1,18 @@
 {
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
 	"extends": [
-		"config:base",
+		"config:recommended",
 		":disableDependencyDashboard",
 		":gitSignOff",
 		":preserveSemverRanges"
 	],
-	"timezone": "America/New_York",
-	"schedule": [
-		"after 8am every weekday"
-	],
 	"rangeStrategy": "update-lockfile",
 	"lockFileMaintenance": {
 		"enabled": true,
-		"automerge": true,
-		"schedule": [
-			"after 8am every weekday"
-		]
+		"automerge": true
 	},
-	"packageRules": [{
+	"packageRules": [
+		{
 			"matchPackagePatterns": [
 				"*"
 			],
