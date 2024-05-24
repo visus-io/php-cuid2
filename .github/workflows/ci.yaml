@@ -6,11 +6,11 @@ on:
       - main
     paths-ignore:
       - "**.md"
-      - '**/renovate.json'
+      - '**/dependabot.yml'
   pull_request:
     paths-ignore:
       - "**.md"
-      - '**/renovate.json'
+      - '**/dependabot.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
