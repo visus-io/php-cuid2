@@ -11,6 +11,7 @@ on:
     paths-ignore:
       - "**.md"
       - '**/dependabot.yml'
+      - '**/codacy-security-scan.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
