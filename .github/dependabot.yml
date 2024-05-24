@@ -7,7 +7,7 @@ updates:
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       major-updates:
         applies-to: version-updates
