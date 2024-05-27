@@ -7,10 +7,17 @@
     ":gitSignOff",
     ":preserveSemverRanges"
   ],
+  "timezone": "America/New_York",
+  "schedule": [
+    "after 8:00am"
+  ],
   "rangeStrategy": "update-lockfile",
   "lockFileMaintenance": {
     "automerge": true,
-    "enabled": true
+    "enabled": true,
+    "schedule": [
+      "after 8:00am"
+    ]
   },
   "packageRules": [
     {
