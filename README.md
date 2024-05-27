@@ -1,6 +1,6 @@
 # visus/cuid2
 
-[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/visus-io/php-cuid2/ci.yaml?style=for-the-badge&logo=github)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/visus-io/php-cuid2/ci.yml?style=for-the-badge&logo=github)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
 [![Code Quality](https://img.shields.io/codacy/grade/da334c04546d4d7381eb4e93f4ebdecd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard)
 [![Coverage](https://img.shields.io/codacy/coverage/da334c04546d4d7381eb4e93f4ebdecd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/coverage/dashboard)
 

@@ -4,14 +4,7 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "**.md"
-      - '**/dependabot.yml'
   pull_request:
-    paths-ignore:
-      - "**.md"
-      - '**/dependabot.yml'
-      - '**/codacy-security-scan.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
