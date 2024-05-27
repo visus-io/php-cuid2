@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "configMigration": true,
+  "extends": [
+    "config:recommended",
+    ":disableDependencyDashboard",
+    ":gitSignOff",
+    ":preserveSemverRanges"
+  ],
+  "rangeStrategy": "update-lockfile",
+  "lockFileMaintenance": {
+    "automerge": true,
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "automerge": true,
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "digest",
+        "minor",
+        "patch"
+      ],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "labels": [
+        "dependencies"
+      ]
+    },
+    {
+      "automerge": false,
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "labels": [
+        "dependencies",
+        "breaking"
+      ]
+    }
+  ]
+}
