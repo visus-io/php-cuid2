@@ -1,8 +1,10 @@
 # visus/cuid2
 
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/visus-io/php-cuid2/ci.yml?style=for-the-badge&logo=github)](https://github.com/visus-io/php-cuid2/actions/workflows/ci.yaml)
-[![Code Quality](https://img.shields.io/codacy/grade/da334c04546d4d7381eb4e93f4ebdecd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/dashboard)
-[![Coverage](https://img.shields.io/codacy/coverage/da334c04546d4d7381eb4e93f4ebdecd?style=for-the-badge&logo=codacy)](https://app.codacy.com/gh/visus-io/php-cuid2/coverage/dashboard)
+
+[![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/visus%3Aphp-cuid2?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud&logoColor=white)](https://sonarcloud.io/summary/overall?id=visus%3Aphp-cuid2)
+[![Sonar Coverage](https://img.shields.io/sonar/coverage/visus%3Aphp-cuid2?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud&logoColor=white)](https://sonarcloud.io/summary/overall?id=visus%3Aphp-cuid2)
+[![Sonar Tests](https://img.shields.io/sonar/tests/visus%3Aphp-cuid2?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud&logoColor=white)](https://sonarcloud.io/summary/overall?id=visus%3Aphp-cuid2)
 
 ![PHP Version](https://img.shields.io/packagist/dependency-v/visus/cuid2/php?style=for-the-badge)
 [![Packagist](https://img.shields.io/packagist/v/visus/cuid2?style=for-the-badge&logo=packagist&logoColor=white&label=stable)](https://packagist.org/packages/visus/cuid2)
