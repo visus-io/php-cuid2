@@ -47,7 +47,7 @@
         "action": "composer psalm"
       },
       {
-        "action": "vendor/bin/phpunit"
+        "action": "XDEBUG_MODE=coverage vendor/bin/phpunit"
       }
     ]
   },
