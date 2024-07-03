@@ -42,7 +42,7 @@ jobs:
       - name: PHPStan
         run: composer phpstan -- --ansi
       - name: Psalm
-        run: composer psalm -- --shepherd
+        run: composer psalm
 
   unit-tests:
     name: Unit Tests
