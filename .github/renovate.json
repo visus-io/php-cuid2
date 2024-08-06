@@ -22,9 +22,6 @@
   "packageRules": [
     {
       "automerge": true,
-      "matchPackagePatterns": [
-        "*"
-      ],
       "matchUpdateTypes": [
         "digest",
         "minor",
@@ -37,13 +34,13 @@
       ],
       "schedule": [
         "after 8:00am"
+      ],
+      "matchPackageNames": [
+        "*"
       ]
     },
     {
       "automerge": false,
-      "matchPackagePatterns": [
-        "*"
-      ],
       "matchUpdateTypes": [
         "major"
       ],
@@ -53,6 +50,9 @@
       ],
       "schedule": [
         "after 8:00am on tuesday"
+      ],
+      "matchPackageNames": [
+        "*"
       ]
     }
   ]
