@@ -1149,16 +1149,16 @@
         },
         {
             "name": "ergebnis/json-normalizer",
-            "version": "4.6.0",
+            "version": "4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ergebnis/json-normalizer.git",
-                "reference": "859fd3cee417f0b10a8e6ffb8dbeb03587106b8b"
+                "reference": "36d86389095736944a5954ec440552bbe92e425f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ergebnis/json-normalizer/zipball/859fd3cee417f0b10a8e6ffb8dbeb03587106b8b",
-                "reference": "859fd3cee417f0b10a8e6ffb8dbeb03587106b8b",
+                "url": "https://api.github.com/repos/ergebnis/json-normalizer/zipball/36d86389095736944a5954ec440552bbe92e425f",
+                "reference": "36d86389095736944a5954ec440552bbe92e425f",
                 "shasum": ""
             },
             "require": {
@@ -1172,21 +1172,34 @@
             },
             "require-dev": {
                 "composer/semver": "^3.4.3",
-                "ergebnis/data-provider": "^3.2.0",
-                "ergebnis/license": "^2.4.0",
-                "ergebnis/php-cs-fixer-config": "^6.36.0",
-                "ergebnis/phpunit-slow-test-detector": "^2.15.1",
-                "fakerphp/faker": "^1.23.1",
+                "ergebnis/composer-normalize": "^2.44.0",
+                "ergebnis/data-provider": "^3.3.0",
+                "ergebnis/license": "^2.5.0",
+                "ergebnis/php-cs-fixer-config": "^6.37.0",
+                "ergebnis/phpunit-slow-test-detector": "^2.16.1",
+                "fakerphp/faker": "^1.24.0",
                 "infection/infection": "~0.26.6",
+                "phpstan/extension-installer": "^1.4.3",
+                "phpstan/phpstan": "^1.12.10",
+                "phpstan/phpstan-deprecation-rules": "^1.2.1",
+                "phpstan/phpstan-phpunit": "^1.4.0",
+                "phpstan/phpstan-strict-rules": "^1.6.1",
                 "phpunit/phpunit": "^9.6.19",
-                "psalm/plugin-phpunit": "~0.19.0",
-                "rector/rector": "^1.2.5",
-                "vimeo/psalm": "^5.26.1"
+                "rector/rector": "^1.2.10"
             },
             "suggest": {
                 "composer/semver": "If you want to use ComposerJsonNormalizer or VersionConstraintNormalizer"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "4.7-dev"
+                },
+                "composer-normalize": {
+                    "indent-size": 2,
+                    "indent-style": "space"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Ergebnis\\Json\\Normalizer\\": "src/"
@@ -1214,7 +1227,7 @@
                 "security": "https://github.com/ergebnis/json-normalizer/blob/main/.github/SECURITY.md",
                 "source": "https://github.com/ergebnis/json-normalizer"
             },
-            "time": "2024-09-27T15:11:59+00:00"
+            "time": "2024-11-17T20:34:42+00:00"
         },
         {
             "name": "ergebnis/json-pointer",
