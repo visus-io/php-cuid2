@@ -21,7 +21,7 @@
         "captainhook/captainhook-phar": "^5.23",
         "captainhook/hook-installer": "^1.0",
         "ergebnis/composer-normalize": "^2.29",
-        "phpstan/phpstan": "^1.9",
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^10.5",
         "ramsey/conventional-commits": "^1.5",
         "squizlabs/php_codesniffer": "^3.7",
