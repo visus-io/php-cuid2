@@ -26,16 +26,6 @@ jobs:
           php-version: '8.1'
           tools: composer
           extensions: :xdebug
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
-        with:
-            path: ${{ steps.composer-cache.outputs.dir }}
-            key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-composer-            
       - name: Composer
         run: |
           composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
@@ -62,16 +52,6 @@ jobs:
           php-version: '8.1'
           tools: composer
           coverage: xdebug
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
-        with:
-            path: ${{ steps.composer-cache.outputs.dir }}
-            key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-composer-            
       - name: Composer
         run: |
           composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
