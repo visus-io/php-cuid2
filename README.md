@@ -17,6 +17,9 @@ A PHP implementation of collision-resistant ids. You can read more about CUIDs f
 
 You can install visus/cuid2 as a [composer package](https://packagist.org/packages/visus/cuid2):
 
+> [!IMPORTANT]
+> The PHP extension [GMP](https://www.php.net/manual/en/intro.gmp.php) is required in order to use this library.
+
 ```shell
 composer require visus/cuid2
 ```
@@ -31,12 +34,12 @@ require_once 'vendor/autoload.php';
 $cuid = new Visus\Cuid2\Cuid2();
 
 // implicit casting
-echo $cuid; // hw8kkckkgwkk0oo0gkw0o8sg
+echo $cuid; // apr5hhh4ox45krsg9gycbs9k
 
 // explicit casting
-echo $cuid->toString(); // hw8kkckkgwkk0oo0gkw0o8sg
+echo $cuid->toString(); // apr5hhh4ox45krsg9gycbs9k
 
 // new (with custom length)
 $cuid = new Visus\Cuid2\Cuid2(10);
-echo $cuid; // psk8844ck4
+echo $cuid; // pekw02xwsd
 ```

@@ -3,7 +3,6 @@
 /.github/                   export-ignore
 /.gitignore                 export-ignore
 /build/                     export-ignore
-/composer.lock              export-ignore
 /phpcs.xml                  export-ignore
 /phpstan.neon               export-ignore
 /phpunit.xml.dist           export-ignore
