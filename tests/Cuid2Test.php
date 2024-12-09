@@ -24,8 +24,6 @@ class Cuid2Test extends TestCase
     {
         $cuid = new Cuid2(10);
 
-        $x = $cuid->toString();
-
         $result = strlen((string)$cuid) === 10 &&
             ctype_alnum((string)$cuid);
 
