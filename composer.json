@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "ext-gmp": "*",
+        "markrogoyski/math-php": "^2.11",
         "symfony/polyfill-php83": "^1.32"
     },
     "require-dev": {
@@ -28,6 +28,9 @@
         "ramsey/conventional-commits": "^1.5",
         "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^6.0"
+    },
+    "suggest": {
+        "ext-gmp": "Allows for quicker Base16 to Base36 conversion"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

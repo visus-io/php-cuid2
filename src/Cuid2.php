@@ -7,11 +7,15 @@ namespace Visus\Cuid2;
 use DateTime;
 use Exception;
 use JsonSerializable;
+use MathPHP\Exception\BadParameterException;
+use MathPHP\Functions\BaseEncoderDecoder;
 use OutOfRangeException;
 use Override;
 
 final class Cuid2 implements JsonSerializable
 {
+    public const BASE36_ALPHANUMERIC = '0123456789abcdefghijklmnopqrstuvwxyz';
+
     private readonly int $counter;
 
     /**
@@ -99,12 +103,13 @@ final class Cuid2 implements JsonSerializable
 
     /**
      * @throws Exception
+     * @throws BadParameterException
      */
     private function render(): string
     {
         if (!in_array('sha3-512', hash_algos())) {
             // phpcs:ignore Generic.Files.LineLength
-            throw new Exception('SHA3-512 appears to be unsupported - make sure you have support for it, or upgrade your version of PHP.');
+            throw new InvalidOperationException('SHA3-512 appears to be unsupported - make sure you have support for it, or upgrade your version of PHP.');
         }
 
         $hash = hash_init('sha3-512');
@@ -117,8 +122,25 @@ final class Cuid2 implements JsonSerializable
 
         $hash = hash_final($hash);
 
-        $result = gmp_strval(gmp_init($hash, 16), 36);
+        $result = self::convert($hash);
 
         return $this->prefix . substr($result, 0, $this->length - 1);
+    }
+
+    /**
+     * Converts Base16 to Base36
+     *
+     * @param string $value
+     * @return string
+     * @throws BadParameterException
+     */
+    private static function convert(string $value): string
+    {
+        if (extension_loaded('gmp')) {
+            return gmp_strval(gmp_init($value, 16), 36);
+        }
+
+        $integer = BaseEncoderDecoder::createArbitraryInteger($value, 16);
+        return BaseEncoderDecoder::toBase($integer, 36, self::BASE36_ALPHANUMERIC);
     }
 }
