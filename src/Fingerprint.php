@@ -59,10 +59,17 @@ final class Fingerprint
      */
     private function generateFingerprint(): array
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $hostnameLength = 15;
+        } else {
+            $hostnameLength = 32;
+        }
+
         $identity = !empty(gethostname())
             ? gethostname()
-            : substr(str_shuffle('abcdefghjkmnpqrstvwxyz0123456789'), 0, 32);
+            : substr(str_shuffle('abcdefghjkmnpqrstvwxyz0123456789'), 0, $hostnameLength);
 
+        $environment = serialize(getenv());
         $process = (string)getmypid();
         $random = bin2hex(random_bytes(32));
 
@@ -70,6 +77,7 @@ final class Fingerprint
 
         hash_update($hash, $identity);
         hash_update($hash, $process);
+        hash_update($hash, $environment);
         hash_update($hash, $random);
 
         $result = unpack('C*', hash_final($hash));
