@@ -15,7 +15,8 @@
     ],
     "require": {
         "php": "^8.1",
-        "ext-gmp": "*"
+        "ext-gmp": "*",
+        "symfony/polyfill-php83": "^1.32"
     },
     "require-dev": {
         "ext-ctype": "*",
@@ -48,6 +49,11 @@
             "captainhook/captainhook-phar": true,
             "captainhook/hook-installer": true,
             "ergebnis/composer-normalize": true
+        }
+    },
+    "extra": {
+        "captainhook": {
+            "force-install": true
         }
     },
     "scripts": {

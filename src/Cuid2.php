@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Visus\Cuid2;
 
+use DateTime;
 use Exception;
 use JsonSerializable;
 use OutOfRangeException;
+use Override;
 
 final class Cuid2 implements JsonSerializable
 {
@@ -50,7 +52,7 @@ final class Cuid2 implements JsonSerializable
         $this->fingerprint = Fingerprint::getInstance()->getValue();
         $this->prefix = chr(random_int(97, 122));
         $this->random = self::generateRandom();
-        $this->timestamp = (int)(microtime(true) * 1000);
+        $this->timestamp = self::generateTimestamp();
     }
 
     /**
@@ -68,8 +70,13 @@ final class Cuid2 implements JsonSerializable
     private function generateRandom(): array
     {
         $result = unpack('C*', random_bytes($this->length));
-
         return $result === false ? [] : $result;
+    }
+
+    private function generateTimestamp(): int
+    {
+        $dateTime = new DateTime();
+        return (int)$dateTime->format('Uv');
     }
 
     /**
@@ -84,6 +91,7 @@ final class Cuid2 implements JsonSerializable
      * @inheritdoc
      * @throws Exception
      */
+    #[Override]
     public function jsonSerialize(): string
     {
         return $this->render();
