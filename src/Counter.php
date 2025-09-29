@@ -14,6 +14,13 @@ use Exception;
  */
 final class Counter
 {
+    /**
+     * The range for the counter value.
+     * 476782367 is chosen to provide a large enough space for unique values while fitting within
+     * the constraints of the CUID2 specification. This value is derived from the maximum safe
+     * integer range for the algorithm, ensuring uniform distribution and minimizing bias when
+     * generating random values. See https://github.com/paralleldrive/cuid2 for details.
+     */
     private const RANGE = 476782367;
 
     private const MAX_ATTEMPTS = 1000;
