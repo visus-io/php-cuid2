@@ -2,7 +2,6 @@
 /.idea/
 
 # Composer
-composer.lock
 /vendor
 
 # PHPUnit
