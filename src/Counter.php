@@ -29,7 +29,8 @@ final class Counter
     {
         $max = PHP_INT_MAX - (PHP_INT_MAX % self::RANGE);
 
-        // If max is less than half of PHP_INT_MAX, we can safely use a simple modulus operation
+        // Fallback: If the bias-free range is insufficient (i.e., max is less than half of PHP_INT_MAX),
+        // use a simple modulus operation, which may introduce bias but is acceptable as a last resort.
         if ($max < PHP_INT_MAX / 2) {
             $this->value = random_int(0, PHP_INT_MAX) % self::RANGE;
             return;
