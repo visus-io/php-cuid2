@@ -38,6 +38,10 @@ final class Counter
 
         // Fallback: If the bias-free range is insufficient (i.e., max is less than half of PHP_INT_MAX),
         // use a simple modulus operation, which may introduce bias but is acceptable as a last resort.
+        // The threshold of half PHP_INT_MAX is chosen because, for values of $max below this,
+        // the probability of bias in the modulus operation increases significantly, and the
+        // number of attempts required for bias-free sampling may become impractically large.
+        // This is a pragmatic balance between statistical correctness and performance.
         if ($max < PHP_INT_MAX / 2) {
             $this->value = random_int(0, PHP_INT_MAX) % self::RANGE;
             return;
