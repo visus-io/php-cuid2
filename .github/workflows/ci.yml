@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
           show-progress: false
-      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f
+      - uses: shivammathur/setup-php@4cba65b8c5a7681c52ce219a59833167d4550fe0
         with:
           php-version: '8.4'
           tools: composer
@@ -43,7 +43,7 @@ jobs:
         with:
           fetch-depth: 0
           show-progress: false
-      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f
+      - uses: shivammathur/setup-php@4cba65b8c5a7681c52ce219a59833167d4550fe0
         with:
           php-version: '8.4'
           tools: composer
@@ -59,7 +59,7 @@ jobs:
       - run: composer normalize --dry-run
       - run: composer validate
       - run: vendor/bin/phpunit || true
-      - uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602
+      - uses: SonarSource/sonarqube-scan-action@5ffbad44543237d1b339a5ed57a774432e19f3e4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
