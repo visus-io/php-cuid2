@@ -16,6 +16,13 @@ final class Cuid2 implements JsonSerializable
 {
     public const BASE36_ALPHANUMERIC = '0123456789abcdefghijklmnopqrstuvwxyz';
 
+    /**
+     * @var array<int, string>|null
+     */
+    private static ?array $algorithmsCache = null;
+
+    private static ?bool $isAlgorithmSupported = null;
+
     private readonly int $counter;
 
     /**
@@ -77,10 +84,9 @@ final class Cuid2 implements JsonSerializable
         return $result === false ? [] : $result;
     }
 
-    private function generateTimestamp(): int
+    private static function generateTimestamp(): int
     {
-        $dateTime = new DateTime();
-        return (int)$dateTime->format('Uv');
+        return (int) (new DateTime())->format('Uv');
     }
 
     /**
@@ -107,7 +113,8 @@ final class Cuid2 implements JsonSerializable
      */
     private function render(): string
     {
-        if (!in_array('sha3-512', hash_algos())) {
+        self::$isAlgorithmSupported ??= self::isSupportedAlgorithm('sha3-512');
+        if (!self::$isAlgorithmSupported) {
             // phpcs:ignore Generic.Files.LineLength
             throw new InvalidOperationException('SHA3-512 appears to be unsupported - make sure you have support for it, or upgrade your version of PHP.');
         }
@@ -142,5 +149,17 @@ final class Cuid2 implements JsonSerializable
 
         $integer = BaseEncoderDecoder::createArbitraryInteger($value, 16);
         return BaseEncoderDecoder::toBase($integer, 36, self::BASE36_ALPHANUMERIC);
+    }
+
+    /**
+     * Checks if the given algorithm is supported.
+     *
+     * @param string $algorithm the algorithm to check.
+     * @return bool true if the algorithm is supported, false otherwise.
+     */
+    private static function isSupportedAlgorithm(string $algorithm): bool
+    {
+        self::$algorithmsCache ??= hash_algos();
+        return in_array($algorithm, self::$algorithmsCache, true);
     }
 }

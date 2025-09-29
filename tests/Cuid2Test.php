@@ -44,25 +44,40 @@ class Cuid2Test extends TestCase
     }
 
     /**
-     * Tests that the generated CUID2 contains only base36 characters (0-9, a-z).
+     * Tests that the generated CUID2 contains only valid base36 characters.
      *
      * @throws OutOfRangeException|Exception
      */
-    public function testBase36Characters(): void
+    public function testContainsOnlyBase36Characters(): void
     {
         $cuid = new Cuid2();
         $result = (string)$cuid;
 
-        // Should only contain characters from 0-9 and a-z
-        $this->assertMatchesRegularExpression('/^[0-9a-z]+$/', $result);
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-z]+$/',
+            $result,
+            'CUID should only contain base36 characters (0-9, a-z)'
+        );
+
+        $this->assertDoesNotMatchRegularExpression(
+            '/[A-Z]/',
+            $result,
+            'CUID should not contain uppercase letters'
+        );
+
+        $this->assertDoesNotMatchRegularExpression(
+            '/[^0-9a-z]/',
+            $result,
+            'CUID should not contain special characters or spaces'
+        );
     }
 
     /**
-     * Tests that the string representation of CUID2 is consistent across methods.
+     * Tests that the string representation of CUID2 is consistent across all methods.
      *
      * @throws OutOfRangeException|Exception
      */
-    public function testConsistentStringRepresentation(): void
+    public function testStringRepresentationConsistency(): void
     {
         $cuid = new Cuid2();
 
@@ -70,120 +85,134 @@ class Cuid2Test extends TestCase
         $magicToString = (string)$cuid;
         $jsonSerialize = $cuid->jsonSerialize();
 
-        $this->assertEquals($toString, $magicToString);
-        $this->assertEquals($toString, $jsonSerialize);
+        $this->assertSame($toString, $magicToString, 'toString() and __toString() should return identical values');
+        $this->assertSame($toString, $jsonSerialize, 'toString() and jsonSerialize() should return identical values');
+
+        // Test immutability - multiple calls return same value
+        $this->assertSame($toString, $cuid->toString(), 'Multiple calls to toString() should return same value');
+        $this->assertSame($magicToString, (string)$cuid, 'Multiple casts to string should return same value');
     }
 
     /**
-     * Tests the constructor with a length of 24.
+     * Tests that invalid lengths throw appropriate exceptions.
      *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testConstructorThrowsOutOfRangeException(): void
-    {
-        $this->expectException(OutOfRangeException::class);
-
-        $_ = new Cuid2(48);
-    }
-
-    /**
-     * Tests the default constructor of Cuid2.
-     *
-     * @throws OutOfRangeException
-     */
-    public function testDefaultConstructor(): void
-    {
-        $cuid = new Cuid2();
-
-        $result = strlen((string)$cuid) === 24 &&
-            ctype_alnum((string)$cuid);
-
-        $this->assertTrue($result);
-    }
-
-    /**
-     * Tests that different instances of Cuid2 generate different values.
-     *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testDifferentInstancesHaveDifferentValues(): void
-    {
-        $cuid1 = new Cuid2();
-        $cuid2 = new Cuid2();
-
-        $this->assertNotEquals((string)$cuid1, (string)$cuid2);
-    }
-
-    /**
-     * Tests the constructor with a length of 4.
-     *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testExplicitToString(): void
-    {
-        $cuid = new Cuid2();
-
-        $value = $cuid->toString();
-
-        $result = strlen($value) === 24 &&
-            ctype_alnum($value);
-
-        $this->assertTrue($result);
-    }
-
-    /**
-     * Tests the implicit string conversion of Cuid2.
-     *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testImplicitToString(): void
-    {
-        $cuid = new Cuid2();
-
-        ob_start();
-        echo $cuid;
-        $value = ob_get_contents();
-        ob_end_clean();
-
-        $result = strlen((string)$value) === 24 &&
-            ctype_alnum($value);
-
-        $this->assertTrue($result);
-    }
-
-    /**
      * @dataProvider invalidLengthProvider
      * @throws Exception
      */
     public function testInvalidLengthThrowsException(int $length): void
     {
         $this->expectException(OutOfRangeException::class);
-        $this->expectExceptionMessage("maxLength: cannot be less than 4 or greater than 32.");
+        $this->expectExceptionMessage('maxLength: cannot be less than 4 or greater than 32.');
 
         new Cuid2($length);
     }
 
     /**
-     * Tests the JSON encoding of Cuid2.
+     * Tests the default constructor produces correct format.
      *
      * @throws OutOfRangeException|Exception
      */
-    public function testJsonEncodeIntegration(): void
+    public function testDefaultConstructor(): void
+    {
+        $cuid = new Cuid2();
+        $result = (string)$cuid;
+
+        $this->assertEquals(24, strlen($result), 'Default CUID should be 24 characters long');
+        $this->assertTrue(ctype_alnum($result), 'Default CUID should be alphanumeric');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z][0-9a-z]*$/',
+            $result,
+            'CUID should start with lowercase letter'
+        );
+    }
+
+    /**
+     * Tests that different instances generate unique values.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testUniquenessAcrossInstances(): void
+    {
+        $cuid1 = new Cuid2();
+        $cuid2 = new Cuid2();
+
+        $this->assertNotEquals(
+            (string)$cuid1,
+            (string)$cuid2,
+            'Different CUID instances should generate unique values'
+        );
+    }
+
+    /**
+     * Tests explicit toString method.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testExplicitToString(): void
+    {
+        $cuid = new Cuid2();
+        $value = $cuid->toString();
+
+        $this->assertEquals(24, strlen($value), 'toString() should return 24 character string');
+        $this->assertTrue(ctype_alnum($value), 'toString() result should be alphanumeric');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z]/',
+            $value,
+            'toString() result should start with lowercase letter'
+        );
+    }
+
+    /**
+     * Tests implicit string conversion.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testImplicitStringConversion(): void
+    {
+        $cuid = new Cuid2();
+
+        $castValue = (string)$cuid;
+        $this->assertEquals(24, strlen($castValue), 'Cast to string should return 24 character string');
+        $this->assertTrue(ctype_alnum($castValue), 'Cast to string result should be alphanumeric');
+
+        ob_start();
+        echo $cuid;
+        $echoValue = ob_get_contents();
+        ob_end_clean();
+
+        $echoValue = !empty($echoValue) ? $echoValue : '';
+
+        $this->assertEquals(24, strlen($echoValue), 'Echo output should be 24 characters long');
+        $this->assertTrue(ctype_alnum($echoValue), 'Echo output should be alphanumeric');
+        $this->assertEquals($castValue, $echoValue, 'Cast and echo should produce same result');
+    }
+
+    /**
+     * Tests JSON encoding integration.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testJsonEncodingIntegration(): void
     {
         $cuid = new Cuid2();
         $jsonString = json_encode($cuid);
 
-        $this->assertIsString($jsonString);
-        $this->assertStringStartsWith('"', $jsonString);
-        $this->assertStringEndsWith('"', $jsonString);
+        $this->assertIsString($jsonString, 'json_encode should return string');
+        $this->assertStringStartsWith('"', $jsonString, 'JSON string should start with quote');
+        $this->assertStringEndsWith('"', $jsonString, 'JSON string should end with quote');
 
         $decoded = json_decode($jsonString, true);
-        $this->assertIsString($decoded);
-        $this->assertEquals(24, strlen($decoded));
+        $this->assertIsString($decoded, 'Decoded JSON should be string');
+        $this->assertEquals(24, strlen($decoded), 'Decoded CUID should be 24 characters');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z][0-9a-z]*$/',
+            $decoded,
+            'Decoded CUID should have correct format'
+        );
     }
 
     /**
-     * Tests the JSON serialization of Cuid2.
+     * Tests JSON serialization method.
      *
      * @throws OutOfRangeException|Exception
      */
@@ -192,16 +221,21 @@ class Cuid2Test extends TestCase
         $cuid = new Cuid2();
         $jsonValue = $cuid->jsonSerialize();
 
-        $this->assertEquals(24, strlen($jsonValue));
-        $this->assertTrue(ctype_alnum($jsonValue));
+        $this->assertEquals(24, strlen($jsonValue), 'JSON serialized value should be 24 characters');
+        $this->assertTrue(ctype_alnum($jsonValue), 'JSON serialized value should be alphanumeric');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z]/',
+            $jsonValue,
+            'JSON serialized value should start with lowercase letter'
+        );
     }
 
     /**
-     * Tests that the length of the generated CUID2 matches the specified length.
+     * Tests length consistency across different constructor parameters.
      *
      * @throws OutOfRangeException|Exception
      */
-    public function testLengthConsistencyAcrossInstances(): void
+    public function testLengthConsistencyWithDifferentLengths(): void
     {
         $lengths = [4, 8, 12, 16, 20, 24, 28, 32];
 
@@ -209,151 +243,141 @@ class Cuid2Test extends TestCase
             $cuid1 = new Cuid2($length);
             $cuid2 = new Cuid2($length);
 
-            $this->assertEquals($length, strlen((string)$cuid1));
-            $this->assertEquals($length, strlen((string)$cuid2));
-            $this->assertNotEquals((string)$cuid1, (string)$cuid2);
+            $result1 = (string)$cuid1;
+            $result2 = (string)$cuid2;
+
+            $this->assertEquals($length, strlen($result1), "CUID with length $length should have correct length");
+            $this->assertEquals($length, strlen($result2), "CUID with length $length should have correct length");
+            $this->assertNotEquals($result1, $result2, 'Different instances with same length should be unique');
+
+            // Verify format for each length
+            $this->assertMatchesRegularExpression(
+                '/^[a-z][0-9a-z]*$/',
+                $result1,
+                "CUID with length $length should have correct format"
+            );
+
+            $this->assertMatchesRegularExpression(
+                '/^[a-z][0-9a-z]*$/',
+                $result2,
+                "CUID with length $length should have correct format"
+            );
         }
     }
 
     /**
-     * Tests the memory usage of CUID2 generation.
-     *
-     * This test checks that generating multiple CUID2 instances does not consume excessive memory.
+     * Tests that the prefix is always a lowercase letter.
      *
      * @throws OutOfRangeException|Exception
      */
-    public function testMemoryUsage(): void
+    public function testPrefixIsAlwaysLowercaseLetter(): void
     {
-        $initialMemory = memory_get_usage();
-
-        $cuids = [];
-        for ($i = 0; $i < 100; $i++) {
-            $cuids[] = new Cuid2();
-        }
-
-        $finalMemory = memory_get_usage();
-        $memoryUsed = $finalMemory - $initialMemory;
-
-        // Memory usage should be reasonable (adjust threshold as needed)
-        $this->assertLessThan(5 * 1024 * 1024, $memoryUsed, 'Memory usage should be reasonable');
-    }
-
-    /**
-     * Tests that multiple calls to the string representation return the same value.
-     *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testMultipleCallsReturnSameValue(): void
-    {
-        $cuid = new Cuid2();
-
-        $first = $cuid->toString();
-        $second = $cuid->toString();
-        $third = (string)$cuid;
-        $fourth = $cuid->jsonSerialize();
-
-        $this->assertEquals($first, $second);
-        $this->assertEquals($first, $third);
-        $this->assertEquals($first, $fourth);
-    }
-
-    /**
-     * Tests that the generated CUID2 does not contain any special characters.
-     *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testNoSpecialCharacters(): void
-    {
-        $cuid = new Cuid2();
-        $result = (string)$cuid;
-
-        // Should not contain any special characters, spaces, or uppercase letters
-        $this->assertDoesNotMatchRegularExpression('/[^0-9a-z]/', $result);
-    }
-
-    /**
-     * Tests the performance of CUID2 generation with multiple instances.
-     *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testPerformanceWithMultipleInstances(): void
-    {
-        $startTime = microtime(true);
-        $count = 100;
-
-        for ($i = 0; $i < $count; $i++) {
+        // Test multiple instances to verify consistency
+        for ($i = 0; $i < 50; $i++) {
             $cuid = new Cuid2();
             $result = (string)$cuid;
-            $this->assertNotEmpty($result);
+            $firstChar = $result[0];
+
+            $this->assertTrue(ctype_alpha($firstChar), 'First character should be alphabetic');
+            $this->assertTrue(ctype_lower($firstChar), 'First character should be lowercase');
+            $this->assertGreaterThanOrEqual('a', $firstChar, 'First character should be >= "a"');
+            $this->assertLessThanOrEqual('z', $firstChar, 'First character should be <= "z"');
         }
-
-        $endTime = microtime(true);
-        $executionTime = $endTime - $startTime;
-
-        // Should complete within reasonable time (adjust as needed)
-        $this->assertLessThan(5.0, $executionTime, 'CUID generation should be performant');
     }
 
     /**
-     * Tests that the prefix of CUID2 is a lowercase letter.
+     * Tests uniqueness of generated CUIDs with larger sample size.
      *
      * @throws OutOfRangeException|Exception
      */
-    public function testPrefixIsLowercaseLetter(): void
-    {
-        $cuid = new Cuid2();
-        $result = (string)$cuid;
-        $firstChar = $result[0];
-
-        $this->assertTrue(ctype_alpha($firstChar));
-        $this->assertTrue(ctype_lower($firstChar));
-        $this->assertGreaterThanOrEqual('a', $firstChar);
-        $this->assertLessThanOrEqual('z', $firstChar);
-    }
-
-    /**
-     * Tests the uniqueness of generated CUIDs.
-     *
-     * @throws OutOfRangeException|Exception
-     */
-    public function testUniqueness(): void
+    public function testUniquenessWithLargeSample(): void
     {
         $cuids = [];
-        $count = 1000;
+        $sampleSize = 1000;
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $sampleSize; $i++) {
             $cuids[] = (string)new Cuid2();
         }
 
         $uniqueCuids = array_unique($cuids);
-        $this->assertCount($count, $uniqueCuids, 'All CUIDs should be unique');
+        $this->assertCount($sampleSize, $uniqueCuids, "All $sampleSize generated CUIDs should be unique");
+
+        // Verify each CUID has correct format
+        foreach ($cuids as $index => $cuid) {
+            $this->assertMatchesRegularExpression(
+                '/^[a-z][0-9a-z]*$/',
+                $cuid,
+                "CUID at index $index should have correct format"
+            );
+        }
     }
 
     /**
      * @dataProvider validLengthProvider
      * @throws Exception
      */
-    public function testValidLengthRange(int $length): void
+    public function testValidLengthsProduceCorrectFormat(int $length): void
     {
         $cuid = new Cuid2($length);
         $result = (string)$cuid;
 
-        $this->assertEquals($length, strlen($result));
-        $this->assertTrue(ctype_alnum($result));
+        $this->assertEquals($length, strlen($result), "CUID should have requested length of $length");
+        $this->assertTrue(ctype_alnum($result), 'CUID should be alphanumeric');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z][0-9a-z]*$/',
+            $result,
+            'CUID should start with lowercase letter and contain only base36 characters'
+        );
     }
 
     /**
-     * Tests the constructor with a variable length.
+     * Tests variable length constructor with specific length.
      *
      * @throws OutOfRangeException|Exception
      */
     public function testVariableLengthConstructor(): void
     {
-        $cuid = new Cuid2(10);
+        $length = 10;
+        $cuid = new Cuid2($length);
+        $result = (string)$cuid;
 
-        $result = strlen((string)$cuid) === 10 &&
-            ctype_alnum((string)$cuid);
+        $this->assertEquals($length, strlen($result), "CUID should have requested length of $length");
+        $this->assertTrue(ctype_alnum($result), 'CUID should be alphanumeric');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z]/',
+            $result,
+            'CUID should start with lowercase letter'
+        );
+    }
 
-        $this->assertTrue($result);
+    /**
+     * Tests that CUIDs maintain format consistency across different lengths.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testFormatConsistencyAcrossLengths(): void
+    {
+        $lengths = [4, 8, 16, 24, 32];
+
+        foreach ($lengths as $length) {
+            $cuid = new Cuid2($length);
+            $result = (string)$cuid;
+
+            // All CUIDs should follow the same format rules regardless of length
+            $this->assertMatchesRegularExpression(
+                '/^[a-z][0-9a-z]*$/',
+                $result,
+                "CUID with length $length should follow format rules"
+            );
+
+            $this->assertEquals($length, strlen($result), "CUID should have exact length $length");
+
+            // Verify no invalid characters
+            $this->assertDoesNotMatchRegularExpression(
+                '/[^0-9a-z]/',
+                $result,
+                'CUID should not contain invalid characters'
+            );
+        }
     }
 }

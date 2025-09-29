@@ -16,6 +16,8 @@ final class Fingerprint
 {
     private static ?Fingerprint $instance = null;
 
+    private static ?string $cachedEnvironment = null;
+
     /**
      * @var array<array-key, mixed>
      */
@@ -36,11 +38,7 @@ final class Fingerprint
      */
     public static function getInstance(): Fingerprint
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new Fingerprint();
-        }
-
-        return self::$instance;
+        return self::$instance ??= new Fingerprint();
     }
 
     /**
@@ -59,29 +57,44 @@ final class Fingerprint
      */
     private function generateFingerprint(): array
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $hostnameLength = 15;
-        } else {
-            $hostnameLength = 32;
-        }
+        $hostnameLength = PHP_OS_FAMILY === 'Windows' ? 15 : 32;
 
-        $identity = !empty(gethostname())
-            ? gethostname()
-            : substr(str_shuffle('abcdefghjkmnpqrstvwxyz0123456789'), 0, $hostnameLength);
+        $hostname = gethostname();
 
-        $environment = serialize(getenv());
-        $process = (string)getmypid();
-        $random = bin2hex(random_bytes(32));
+        $identity = !empty($hostname)
+            ? $hostname
+            : $this->generateRandomIdentity($hostnameLength);
 
         $hash = hash_init('sha3-512');
 
         hash_update($hash, $identity);
-        hash_update($hash, $process);
-        hash_update($hash, $environment);
-        hash_update($hash, $random);
+        hash_update($hash, (string)getmypid());
+        hash_update($hash, $this->getCachedEnvironment());
+        hash_update($hash, bin2hex(random_bytes(32)));
 
-        $result = unpack('C*', hash_final($hash));
+        $result = unpack('C*', hash_final($hash, true));
 
-        return $result === false ? [] : $result;
+        return $result !== false ? array_values($result) : [];
+    }
+
+    private function getCachedEnvironment(): string
+    {
+        return self::$cachedEnvironment ??= serialize(getenv());
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    private function generateRandomIdentity(int $length): string
+    {
+        $chars = 'abcdefghjkmnpqrstvwxyz0123456789';
+        $result = '';
+        $max = strlen($chars) - 1;
+
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $chars[random_int(0, $max)];
+        }
+
+        return $result;
     }
 }

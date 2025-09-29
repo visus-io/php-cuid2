@@ -2,8 +2,7 @@ name: Continuous Integration
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
 
 concurrency:
@@ -12,55 +11,55 @@ concurrency:
 
 jobs:
   static-analysis:
-    name: Static Analysis
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           show-progress: false
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f
         with:
-          php-version: '8.1'
+          php-version: '8.4'
           tools: composer
-          extensions: :xdebug
-      - name: Composer
-        run: |
-          composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
-          composer normalize --dry-run
-          composer validate
-      - name: PHPStan
-        run: composer phpstan -- --ansi
-      - name: Psalm
-        run: composer psalm
+          extensions: xdebug
+      - uses: actions/cache@v4
+        with:
+          path: |
+            vendor
+            ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+      - run: composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
+      - run: composer normalize --dry-run
+      - run: composer validate
+      - run: composer phpstan -- --ansi
+      - run: composer psalm
 
   unit-tests:
-    name: Unit Tests
     needs: [static-analysis]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           show-progress: false
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f
         with:
-          php-version: '8.1'
+          php-version: '8.4'
           tools: composer
           coverage: xdebug
-      - name: Composer
-        run: |
-          composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
-          composer normalize --dry-run
-          composer validate
-      - name: PHPUnit
-        run: vendor/bin/phpunit || true
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+      - uses: actions/cache@v4
+        with:
+          path: |
+            vendor
+            ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+      - run: composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
+      - run: composer normalize --dry-run
+      - run: composer validate
+      - run: vendor/bin/phpunit || true
+      - uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

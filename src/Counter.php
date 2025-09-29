@@ -14,6 +14,10 @@ use Exception;
  */
 final class Counter
 {
+    private const RANGE = 476782367;
+
+    private const MAX_ATTEMPTS = 1000;
+
     private static ?Counter $instance = null;
 
     /**
@@ -21,12 +25,28 @@ final class Counter
      */
     private int $value;
 
-    /**
-     * @throws Exception
-     */
     private function __construct()
     {
-        $this->value = (int)(random_int(PHP_INT_MIN, PHP_INT_MAX) * 476782367);
+        $max = PHP_INT_MAX - (PHP_INT_MAX % self::RANGE);
+
+        // If max is less than half of PHP_INT_MAX, we can safely use a simple modulus operation
+        if ($max < PHP_INT_MAX / 2) {
+            $this->value = random_int(0, PHP_INT_MAX) % self::RANGE;
+            return;
+        }
+
+        $attempts = 0;
+
+        do {
+            if (++$attempts > self::MAX_ATTEMPTS) {
+                $this->value = random_int(0, PHP_INT_MAX) % self::RANGE;
+                return;
+            }
+
+            $randomInt = random_int(0, PHP_INT_MAX);
+        } while ($randomInt >= $max);
+
+        $this->value = $randomInt % self::RANGE;
     }
 
     /**
@@ -36,11 +56,7 @@ final class Counter
      */
     public static function getInstance(): Counter
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new Counter();
-        }
-
-        return self::$instance;
+        return self::$instance ??= new Counter();
     }
 
     /**
