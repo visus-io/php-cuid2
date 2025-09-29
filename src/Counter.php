@@ -47,7 +47,7 @@ final class Counter
             return;
         }
 
-        $attempts = 0;
+        $attempts = -1;
 
         do {
             if (++$attempts > self::MAX_ATTEMPTS) {
