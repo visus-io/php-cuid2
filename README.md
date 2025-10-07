@@ -66,6 +66,9 @@ echo $cuid; // pekw02xwsd
 ```
 ### Validation
 
+> [!NOTE]
+> This method does not guarantee that the value is actually a CUID2, only that it follows the format.
+
 ```php
 <?php
 require_once 'vendor/autoload.php';
