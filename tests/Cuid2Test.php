@@ -44,6 +44,46 @@ class Cuid2Test extends TestCase
     }
 
     /**
+     * Provides valid CUID2 strings for testing isValid method.
+     *
+     * @return array<string, array<mixed>>
+     */
+    public static function validCuidProvider(): array
+    {
+        return [
+            'minimum length' => ['a1b2', 4],
+            'short cuid' => ['x7z9k2m1', 8],
+            'medium cuid' => ['q5w8e3r6t9y2u1i4', 16],
+            'default length' => ['p0o9i8u7y6t5r4e3w2q1a2s3', 24],
+            'maximum length' => ['z1x2c3v4b5n6m7q8w9e0r1t2y3u4i5o6', 32],
+            'mixed characters' => ['a1b2c3d4e5f6g7h8i9j0k1l2', 24],
+            'all letters' => ['abcd', 4],
+            'starts with letter and numbers' => ['a123', 4],
+        ];
+    }
+
+    /**
+     * Provides invalid CUID2 strings for testing isValid method.
+     *
+     * @return array<string, array<mixed>>
+     */
+    public static function invalidCuidProvider(): array
+    {
+        return [
+            'too short' => ['abc', null],
+            'too long' => ['a' . str_repeat('1', 32), null],
+            'empty string' => ['', null],
+            'contains uppercase' => ['A1b2c3d4', null],
+            'contains special chars' => ['a1b2-c3d4', null],
+            'contains spaces' => ['a1b2 c3d4', null],
+            'contains underscore' => ['a1b2_c3d4', null],
+            'starts with number' => ['1abc', null],
+            'unicode characters' => ['a1b2ñ3d4', null],
+            'contains symbols' => ['a1b2@3d4', null],
+        ];
+    }
+
+    /**
      * Tests that the generated CUID2 contains only valid base36 characters.
      *
      * @throws OutOfRangeException|Exception
@@ -468,9 +508,192 @@ class Cuid2Test extends TestCase
         $generateResult = (string)$generateCuid;
 
         // Should have same length and format, but different values
-        $this->assertEquals(strlen($constructorResult), strlen($generateResult), 'Both methods should produce same length');
-        $this->assertMatchesRegularExpression('/^[a-z][0-9a-z]*$/', $constructorResult, 'Constructor result should have correct format');
-        $this->assertMatchesRegularExpression('/^[a-z][0-9a-z]*$/', $generateResult, 'Generate result should have correct format');
+        $this->assertEquals(strlen($constructorResult),
+            strlen($generateResult),
+            'Both methods should produce same length'
+        );
+
+        $this->assertMatchesRegularExpression('/^[a-z][0-9a-z]*$/',
+            $constructorResult,
+            'Constructor result should have correct format'
+        );
+
+        $this->assertMatchesRegularExpression('/^[a-z][0-9a-z]*$/',
+            $generateResult,
+            'Generate result should have correct format'
+        );
+
         $this->assertNotEquals($constructorResult, $generateResult, 'Results should be unique');
+    }
+
+    /**
+     * Tests isValid method with valid CUID2 strings.
+     *
+     * @dataProvider validCuidProvider
+     */
+    public function testIsValidWithValidCuids(string $cuid, ?int $expectedLength = null): void
+    {
+        $this->assertTrue(
+            Cuid2::isValid($cuid, $expectedLength),
+            "CUID '$cuid' should be considered valid"
+        );
+    }
+
+    /**
+     * Tests isValid method with invalid CUID2 strings.
+     *
+     * @dataProvider invalidCuidProvider
+     */
+    public function testIsValidWithInvalidCuids(string $cuid, ?int $expectedLength = null): void
+    {
+        $this->assertFalse(
+            Cuid2::isValid($cuid, $expectedLength),
+            "CUID '$cuid' should be considered invalid"
+        );
+    }
+
+    /**
+     * Tests isValid method with length validation.
+     */
+    public function testIsValidWithExpectedLength(): void
+    {
+        $validCuid = 'a1b2c3d4e5f6g7h8';
+
+        // Should be valid when length matches
+        $this->assertTrue(
+            Cuid2::isValid($validCuid, 16),
+            'Valid CUID should pass when expected length matches actual length'
+        );
+
+        // Should be invalid when length doesn't match
+        $this->assertFalse(
+            Cuid2::isValid($validCuid, 24),
+            'Valid CUID should fail when expected length differs from actual length'
+        );
+
+        $this->assertFalse(
+            Cuid2::isValid($validCuid, 8),
+            'Valid CUID should fail when expected length is shorter than actual length'
+        );
+    }
+
+    /**
+     * Tests isValid method with edge cases for length validation.
+     */
+    public function testIsValidLengthEdgeCases(): void
+    {
+        // Test minimum valid length
+        $this->assertTrue(Cuid2::isValid('a1b2', 4), 'Minimum length CUID should be valid');
+        $this->assertFalse(Cuid2::isValid('a1b', 3), 'Below minimum length should be invalid even with matching expected length');
+
+        // Test maximum valid length
+        $maxLengthCuid = 'a' . str_repeat('1', 31);
+        $this->assertTrue(Cuid2::isValid($maxLengthCuid, 32), 'Maximum length CUID should be valid');
+
+        // Test above maximum length
+        $tooLongCuid = 'a' . str_repeat('1', 32);
+        $this->assertFalse(Cuid2::isValid($tooLongCuid, 33), 'Above maximum length should be invalid even with matching expected length');
+    }
+
+    /**
+     * Tests isValid method without expected length parameter.
+     */
+    public function testIsValidWithoutExpectedLength(): void
+    {
+        $this->assertTrue(Cuid2::isValid('a1b2'), 'Valid minimum length CUID should pass without expected length');
+        $this->assertTrue(Cuid2::isValid('a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6'), 'Valid maximum length CUID should pass without expected length');
+        $this->assertFalse(Cuid2::isValid('abc'), 'Too short CUID should fail without expected length');
+        $this->assertFalse(Cuid2::isValid('A1b2'), 'CUID with uppercase should fail without expected length');
+    }
+
+    /**
+     * Tests isValid method with generated CUIDs.
+     *
+     * @throws Exception
+     */
+    public function testIsValidWithGeneratedCuids(): void
+    {
+        $lengths = [4, 8, 16, 24, 32];
+
+        foreach ($lengths as $length) {
+            $cuid = Cuid2::generate($length);
+            $cuidString = (string)$cuid;
+
+            // Generated CUID should always be valid
+            $this->assertTrue(
+                Cuid2::isValid($cuidString),
+                "Generated CUID of length $length should be valid"
+            );
+
+            // Generated CUID should be valid with correct expected length
+            $this->assertTrue(
+                Cuid2::isValid($cuidString, $length),
+                "Generated CUID should be valid with matching expected length $length"
+            );
+
+            // Generated CUID should be invalid with wrong expected length
+            $wrongLength = $length === 4 ? 8 : 4;
+            $this->assertFalse(
+                Cuid2::isValid($cuidString, $wrongLength),
+                "Generated CUID should be invalid with wrong expected length $wrongLength"
+            );
+        }
+    }
+
+    /**
+     * Tests isValid method with character set validation.
+     */
+    public function testIsValidCharacterSetValidation(): void
+    {
+        // Test all valid base36 characters
+        $validChars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        $testCuid = 'a' . substr(str_shuffle($validChars), 0, 7);
+        $this->assertTrue(Cuid2::isValid($testCuid), 'CUID with all valid base36 characters should be valid');
+
+        // Test invalid characters
+        $invalidChars = ['A', 'Z', '-', '_', '@', '#', '$', '%', '^', '&', '*'];
+        foreach ($invalidChars as $invalidChar) {
+            $invalidCuid = 'a1b2' . $invalidChar . '3d4';
+            $this->assertFalse(
+                Cuid2::isValid($invalidCuid),
+                "CUID containing invalid character '$invalidChar' should be invalid"
+            );
+        }
+    }
+
+    /**
+     * Tests isValid method regex pattern matching.
+     */
+    public function testIsValidRegexPattern(): void
+    {
+        // Test the regex pattern directly through various scenarios
+        $validPatterns = [
+            'a123',
+            'z999',
+            'x1y2z3a4b5c6',
+            'q0w1e2r3t4y5u6i7o8p9',
+        ];
+
+        foreach ($validPatterns as $pattern) {
+            $this->assertTrue(
+                Cuid2::isValid($pattern),
+                "Pattern '$pattern' should match valid CUID regex"
+            );
+        }
+
+        $invalidPatterns = [
+            'A123', // uppercase
+            'a-23', // contains hyphen
+            'a_23', // contains underscore
+            'a 23', // contains space
+            'a.23', // contains dot
+        ];
+
+        foreach ($invalidPatterns as $pattern) {
+            $this->assertFalse(
+                Cuid2::isValid($pattern),
+                "Pattern '$pattern' should not match valid CUID regex"
+            );
+        }
     }
 }

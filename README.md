@@ -24,7 +24,7 @@ composer require visus/cuid2
 > Consider installing/enabling the PHP extension [GMP](https://www.php.net/manual/en/intro.gmp.php).
 > If this is not an option then [markrogoyski/math-php](https://github.com/markrogoyski/math-php) will be used as a fallback.
 
-## Quick Example
+## Examples
 
 ### Instance Based
 
@@ -63,4 +63,18 @@ echo $cuid->toString(); // apr5hhh4ox45krsg9gycbs9k
 // new (with custom length)
 $cuid = Visus\Cuid2\Cuid2::generate(10);
 echo $cuid; // pekw02xwsd
+```
+### Validation
+
+> [!NOTE]
+> This method does not guarantee that the value is actually a CUID2, only that it follows the format.
+
+```php
+<?php
+require_once 'vendor/autoload.php';
+
+Cuid2::isValid('apr5hhh4ox45krsg9gycbs9k'); // true
+Cuid2::isValid('invalid-cuid'); // false
+Cuid2::isValid('pekw02xwsd', expectedLength: 10); // true
+
 ```
