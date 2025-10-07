@@ -93,15 +93,20 @@ final class Cuid2 implements JsonSerializable
     public static function isValid(string $id, ?int $expectedLength = null): bool
     {
         $length = strlen($id);
-        if ($length < 4 || $length > 32) {
+
+        $isLengthValid = ($length >= 4 && $length <= 32) &&
+            ($expectedLength === null ||
+                ($expectedLength >= 4 && $expectedLength <= 32 && $length === $expectedLength));
+
+        if (!$isLengthValid) {
             return false;
         }
 
-        if ($expectedLength !== null && $length !== $expectedLength) {
-            return false;
-        }
+        $pattern = $expectedLength !== null
+            ? sprintf('/^[a-z][a-z0-9]{%d}$/', $expectedLength - 1)
+            : '/^[a-z][a-z0-9]{3,31}$/';
 
-        return preg_match('/^[a-z][a-z0-9]{3,31}$/', $id) === 1;
+        return preg_match($pattern, $id) === 1;
     }
 
     /**
