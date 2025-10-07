@@ -78,6 +78,15 @@ final class Cuid2 implements JsonSerializable
         return new self($maxLength);
     }
 
+    public static function isValid(string $id, ?int $expectedLength = null): bool
+    {
+        if ($expectedLength !== null && (strlen($id) < 4 || strlen($id) > 32 || strlen($id) !== $expectedLength)) {
+            return false;
+        }
+
+        return preg_match('/^[a-z][a-z0-9]{3,31}$/', $id) === 1;
+    }
+
     /**
      * @throws Exception
      */
