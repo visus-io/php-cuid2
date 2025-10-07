@@ -380,4 +380,97 @@ class Cuid2Test extends TestCase
             );
         }
     }
+
+    /**
+     * Tests the static generate method.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testStaticGenerateMethod(): void
+    {
+        $cuid = Cuid2::generate();
+        $result = (string)$cuid;
+
+        $this->assertEquals(24, strlen($result), 'Generated CUID should be 24 characters long');
+        $this->assertTrue(ctype_alnum($result), 'Generated CUID should be alphanumeric');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z][0-9a-z]*$/',
+            $result,
+            'Generated CUID should start with lowercase letter'
+        );
+    }
+
+    /**
+     * Tests the static generate method with custom length.
+     *
+     * @dataProvider validLengthProvider
+     * @throws Exception
+     */
+    public function testStaticGenerateMethodWithLength(int $length): void
+    {
+        $cuid = Cuid2::generate($length);
+        $result = (string)$cuid;
+
+        $this->assertEquals($length, strlen($result), "Generated CUID should have requested length of $length");
+        $this->assertTrue(ctype_alnum($result), 'Generated CUID should be alphanumeric');
+        $this->assertMatchesRegularExpression(
+            '/^[a-z][0-9a-z]*$/',
+            $result,
+            'Generated CUID should start with lowercase letter and contain only base36 characters'
+        );
+    }
+
+    /**
+     * Tests that static generate method throws exception for invalid lengths.
+     *
+     * @dataProvider invalidLengthProvider
+     * @throws Exception
+     */
+    public function testStaticGenerateMethodThrowsExceptionForInvalidLength(int $length): void
+    {
+        $this->expectException(OutOfRangeException::class);
+        $this->expectExceptionMessage('maxLength: cannot be less than 4 or greater than 32.');
+
+        Cuid2::generate($length);
+    }
+
+    /**
+     * Tests that static generate method produces unique values.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testStaticGenerateMethodUniqueness(): void
+    {
+        $cuid1 = Cuid2::generate();
+        $cuid2 = Cuid2::generate();
+
+        $this->assertNotEquals(
+            (string)$cuid1,
+            (string)$cuid2,
+            'Different calls to generate() should produce unique values'
+        );
+    }
+
+    /**
+     * Tests equivalence between constructor and static generate method.
+     *
+     * @throws OutOfRangeException|Exception
+     */
+    public function testConstructorAndGenerateMethodEquivalence(): void
+    {
+        $length = 16;
+
+        // Both methods should produce CUIDs with identical characteristics
+        $constructorCuid = new Cuid2($length);
+        $generateCuid = Cuid2::generate($length);
+
+        $constructorResult = (string)$constructorCuid;
+        $generateResult = (string)$generateCuid;
+
+        // Should have same length and format, but different values
+        $this->assertEquals(strlen($constructorResult), strlen($generateResult), 'Both methods should produce same length');
+        $this->assertMatchesRegularExpression('/^[a-z][0-9a-z]*$/', $constructorResult, 'Constructor result should have correct format');
+        $this->assertMatchesRegularExpression('/^[a-z][0-9a-z]*$/', $generateResult, 'Generate result should have correct format');
+        $this->assertNotEquals($constructorResult, $generateResult, 'Results should be unique');
+    }
 }

@@ -26,6 +26,8 @@ composer require visus/cuid2
 
 ## Quick Example
 
+### Instance Based
+
 ```php
 <?php
 require_once 'vendor/autoload.php';
@@ -41,5 +43,24 @@ echo $cuid->toString(); // apr5hhh4ox45krsg9gycbs9k
 
 // new (with custom length)
 $cuid = new Visus\Cuid2\Cuid2(10);
+echo $cuid; // pekw02xwsd
+```
+### Static Based
+
+```php
+<?php
+require_once 'vendor/autoload.php';
+
+// new (default length of 24)
+$cuid = Visus\Cuid2\Cuid2::generate();
+
+// implicit casting
+echo $cuid; // apr5hhh4ox45krsg9gycbs9k
+
+// explicit casting
+echo $cuid->toString(); // apr5hhh4ox45krsg9gycbs9k
+
+// new (with custom length)
+$cuid = Visus\Cuid2\Cuid2::generate(10);
 echo $cuid; // pekw02xwsd
 ```

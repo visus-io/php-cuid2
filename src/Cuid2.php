@@ -67,6 +67,18 @@ final class Cuid2 implements JsonSerializable
     }
 
     /**
+     * Generates a new CUID2.
+     *
+     * @param int $maxLength
+     * @return Cuid2
+     * @throws Exception
+     */
+    public static function generate(int $maxLength = 24): Cuid2
+    {
+        return new self($maxLength);
+    }
+
+    /**
      * @throws Exception
      */
     public function __toString(): string
