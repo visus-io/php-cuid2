@@ -1,5 +1,12 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
 parameters:
+    tmpDir: ./build/cache/phpstan
     level: max
+    treatPhpDocTypesAsCertain: false
     paths:
         - src
         - tests
+    excludePaths:
+        - vendor

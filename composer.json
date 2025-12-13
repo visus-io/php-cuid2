@@ -14,23 +14,26 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "markrogoyski/math-php": "^2.11",
         "symfony/polyfill-php83": "^1.32"
     },
     "require-dev": {
-        "ext-ctype": "*",
-        "captainhook/captainhook-phar": "^5.23",
+        "captainhook/captainhook": "^5.27",
         "captainhook/hook-installer": "^1.0",
+        "captainhook/plugin-composer": "^5.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
         "ergebnis/composer-normalize": "^2.29",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "phpbench/phpbench": "^1.4",
         "phpstan/phpstan": "^1.9",
         "phpunit/phpunit": "^10.5",
         "ramsey/conventional-commits": "^1.5",
-        "squizlabs/php_codesniffer": "^4.0",
-        "vimeo/psalm": "^6.0"
+        "slevomat/coding-standard": "^8.25",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "suggest": {
-        "ext-gmp": "Allows for quicker Base16 to Base36 conversion"
+        "ext-gmp": "Enables faster math with arbitrary precision integers using GMP."
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -44,13 +47,15 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Visus\\Cuid2\\Test\\": "tests/"
+            "Visus\\Cuid2\\Test\\": "tests/",
+            "Visus\\Cuid2\\Test\\Benchmark\\": "tests/benchmark"
         }
     },
     "config": {
         "allow-plugins": {
-            "captainhook/captainhook-phar": true,
             "captainhook/hook-installer": true,
+            "captainhook/plugin-composer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
             "ergebnis/composer-normalize": true
         }
     },
@@ -60,9 +65,30 @@
         }
     },
     "scripts": {
-        "phpstan": [
-            "phpstan analyse -c phpstan.neon --no-progress --memory-limit=1G"
+        "dev:analyze": [
+            "@dev:analyze:phpstan"
         ],
-        "psalm": "psalm --show-info=false --config=psalm.xml"
+        "dev:analyze:phpstan": [
+            "phpstan analyse -c phpstan.neon --ansi --memory-limit=1G"
+        ],
+        "dev:benchmark": "phpbench run tests/benchmark/ --report=default",
+        "dev:build:clean": "git clean -fX build/",
+        "dev:lint": [
+            "@dev:lint:syntax",
+            "@dev:lint:style"
+        ],
+        "dev:lint:fix": "phpcbf --cache=build/cache/phpcs.cache",
+        "dev:lint:style": "phpcs --cache=build/cache/phpcs.cache --colors",
+        "dev:lint:syntax": "parallel-lint --colors src/ tests/",
+        "dev:test": [
+            "@dev:lint",
+            "@dev:benchmark",
+            "@dev:analyze",
+            "@dev:test:unit"
+        ],
+        "dev:test:coverage:ci": "@php -d 'xdebug.mode=coverage' vendor/bin/phpunit --colors=always --coverage-clover build/coverage/xml/clover.xml --log-junit build/coverage/xml/execution.xml",
+        "dev:test:coverage:html": "@php -d 'xdebug.mode=coverage' vendor/bin/phpunit --colors=always --coverage-html build/coverage/html",
+        "dev:test:unit": "phpunit --colors=always --no-coverage",
+        "test": "@dev:test"
     }
 }

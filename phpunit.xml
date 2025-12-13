@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          colors="true"
-         cacheDirectory=".phpunit.cache">
+         cacheDirectory=".phpunit.cache"
+         failOnWarning="true"
+         failOnRisky="true"
+         beStrictAboutOutputDuringTests="true">
   <testsuites>
-    <testsuite name="default">
+    <testsuite name="unit-tests">
       <directory>tests</directory>
     </testsuite>
   </testsuites>
-  <coverage>
-    <report>
-      <clover outputFile="build/logs/clover.xml" />
-    </report>
-  </coverage>
-  <php>
-    <!-- E_ALL & ~E_DEPRECATED -->
-    <ini name="error_reporting" value="24575"/>
-  </php>
   <source>
     <include>
       <directory>src</directory>
@@ -25,7 +19,7 @@
       <file>src/compat.php</file>
     </exclude>
   </source>
-  <logging>
-    <junit outputFile="build/logs/execution.xml" />
-  </logging>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+  </php>
 </phpunit>
