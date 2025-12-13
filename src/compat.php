@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
+// @phpstan-ignore-next-line
 if (!is_callable('getmypid')) {
     function getmypid(): int
     {
-        return rand(1, 32768);
+        try {
+            return random_int(1, 32768);
+        } catch (Throwable) {
+            return (int) (microtime(true) * 1000) % 32768 ?: 1;
+        }
     }
 }
 
+// @phpstan-ignore-next-line
 if (!is_callable('gethostname')) {
     function gethostname(): string
     {

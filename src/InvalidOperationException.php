@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Visus\Cuid2;
 
-use Exception;
+use RuntimeException;
 
 /**
- * Exception that is thrown when a method call is invalid for the object's current state.
+ * Exception thrown when an operation cannot be performed due to invalid state or environment.
  */
-final class InvalidOperationException extends Exception
+final class InvalidOperationException extends RuntimeException
 {
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Visus\Cuid2;
 
-use DateTime;
 use Exception;
 use JsonSerializable;
 use MathPHP\Exception\BadParameterException;
@@ -12,66 +11,133 @@ use MathPHP\Functions\BaseEncoderDecoder;
 use OutOfRangeException;
 use Override;
 
+/**
+ * Generates collision-resistant, URL-safe unique identifiers (CUID2).
+ *
+ * This class implements the CUID2 specification to generate unique, sortable identifiers
+ * that are more secure and collision-resistant than traditional UUIDs. Each CUID consists of:
+ * - Random lowercase letter prefix (a-z)
+ * - Timestamp in milliseconds (collision prevention across time)
+ * - Monotonic counter (collision prevention in rapid succession)
+ * - Machine/process fingerprint (uniqueness across machines)
+ * - Cryptographically secure random data
+ *
+ * All components are hashed with SHA3-512 and converted to base36 for the final identifier.
+ *
+ * Performance Characteristics:
+ * - CUID value generated immediately during construction
+ * - Value cached for zero-overhead repeated access
+ * - Binary data stored directly (no pack/unpack overhead)
+ * - High-resolution timestamp using hrtime()
+ * - Immutable once constructed
+ *
+ * Example:
+ * ```php
+ * $cuid = new Cuid2(); // Default 24 characters
+ * $short = new Cuid2(10); // Shorter 10 character ID
+ * echo $cuid; // e.g., "tz4a98xxat96iws9zmbrgj3a"
+ * ```
+ *
+ * @see https://github.com/paralleldrive/cuid2 CUID2 specification
+ */
 final class Cuid2 implements JsonSerializable
 {
+    /**
+     * Base36 alphabet used for encoding (0-9, a-z).
+     */
     public const BASE36_ALPHANUMERIC = '0123456789abcdefghijklmnopqrstuvwxyz';
 
     /**
+     * Cached list of available hash algorithms.
+     *
      * @var array<int, string>|null
      */
     private static ?array $algorithmsCache = null;
 
+    /**
+     * Cached result of SHA3-512 algorithm support check.
+     */
     private static ?bool $isAlgorithmSupported = null;
 
+    /**
+     * Monotonic counter value for this CUID (prevents rapid-succession collisions).
+     */
     private readonly int $counter;
 
     /**
-     * @var array<array-key, mixed>
+     * Machine/process fingerprint as binary data (ensures uniqueness across machines).
      */
-    private readonly array $fingerprint;
+    private readonly string $fingerprint;
 
     /**
+     * Configured length of the CUID string.
+     *
      * @var int<1, max>
      */
     private readonly int $length;
 
+    /**
+     * Random lowercase letter prefix (a-z).
+     */
     private readonly string $prefix;
 
     /**
-     * @var array<array-key, mixed>
+     * Cryptographically secure random bytes.
      */
-    private readonly array $random;
+    private readonly string $random;
 
+    /**
+     * Timestamp in milliseconds when this CUID was created.
+     */
     private readonly int $timestamp;
 
     /**
-     * Initializes a new instance of Cuid2.
+     * The final rendered CUID string value (cached for performance).
+     */
+    private readonly string $value;
+
+    /**
+     * Initializes a new CUID2 instance.
      *
-     * @param  int $maxLength The maximum string length value of the CUID.
-     * @throws OutOfRangeException The value of $maxLength was less than 4 or greater than 32.
-     * @throws Exception
+     * Generates all components (timestamp, counter, fingerprint, random data) and immediately
+     * renders the final CUID string for predictable performance and efficient repeated access.
+     *
+     * @param int $maxLength Total length of the CUID string (4-32 characters, default 24).
+     *
+     * @throws OutOfRangeException If $maxLength is less than 4 or greater than 32.
+     * @throws Exception If random byte generation fails (extremely rare).
+     * @throws BadParameterException If base conversion fails (should never occur).
      */
     public function __construct(int $maxLength = 24)
     {
         if ($maxLength < 4 || $maxLength > 32) {
-            throw new OutOfRangeException("maxLength: cannot be less than 4 or greater than 32.");
+            throw new OutOfRangeException('maxLength: cannot be less than 4 or greater than 32.');
         }
 
+        /** @phpstan-var int<4, 32> $maxLength */
         $this->length = $maxLength;
-        $this->counter = Counter::getInstance()->getNextValue();
-
-        $this->fingerprint = Fingerprint::getInstance()->getValue();
-        $this->prefix = chr(random_int(97, 122));
-        $this->random = self::generateRandom();
         $this->timestamp = self::generateTimestamp();
+        $this->counter = Counter::getInstance()->getNextValue();
+        $this->fingerprint = Fingerprint::getInstance()->getValue();
+        $this->random = self::generateRandom($maxLength);
+        $this->prefix = chr(random_int(97, 122));
+
+        // Generate value immediately for consistent performance characteristics
+        $this->value = $this->render();
     }
 
     /**
-     * Generates a new CUID2.
+     * Static factory method to generate a new CUID2.
      *
-     * @param int $maxLength
-     * @return Cuid2
-     * @throws Exception
+     * Convenience method equivalent to `new Cuid2($maxLength)`.
+     *
+     * @param int $maxLength Total length of the CUID string (4-32 characters, default 24).
+     *
+     * @return Cuid2 A new CUID2 instance.
+     *
+     * @throws OutOfRangeException If $maxLength is less than 4 or greater than 32.
+     * @throws Exception If random byte generation fails (extremely rare).
+     * @throws BadParameterException If base conversion fails (should never occur).
      */
     public static function generate(int $maxLength = 24): Cuid2
     {
@@ -79,96 +145,151 @@ final class Cuid2 implements JsonSerializable
     }
 
     /**
-     * Validates whether the given string is a valid CUID2 identifier.
+     * Validates whether a string conforms to the CUID2 format.
      *
-     * Function does not guarantee that the provided value is a CUID2 generated by this library,
-     * only that it conforms to the CUID2 format.
+     * Performs format validation only - checks length and character pattern.
+     * Does NOT verify the string was actually generated by this library.
      *
-     * @param string $id The CUID2 identifier to validate.
-     * @param int|null $expectedLength The expected length of the CUID2 identifier.
-     * If null, lengths of 4 to 32 characters are checked.
+     * Format requirements:
+     * - First character: lowercase letter (a-z)
+     * - Remaining characters: lowercase alphanumeric (a-z, 0-9)
+     * - Total length: 4-32 characters
      *
-     * @return bool True if the identifier is valid, false otherwise.
+     * @param string $id The string to validate.
+     * @param int|null $expectedLength Optional expected length for strict validation.
+     *                                  If null, any length between 4-32 is accepted.
+     *
+     * @return bool True if the string matches CUID2 format, false otherwise.
      */
     public static function isValid(string $id, ?int $expectedLength = null): bool
     {
         $length = strlen($id);
 
-        $isLengthValid = ($length >= 4 && $length <= 32) &&
-            ($expectedLength === null ||
-                ($expectedLength >= 4 && $expectedLength <= 32 && $length === $expectedLength));
-
-        if (!$isLengthValid) {
+        // Validate all length constraints in one check
+        if (
+            $length < 4 || $length > 32 ||
+            ($expectedLength !== null && ($expectedLength < 4 || $expectedLength > 32 || $length !== $expectedLength))
+        ) {
             return false;
         }
 
-        $pattern = $expectedLength !== null
-            ? sprintf('/^[a-z][a-z0-9]{%d}$/', $expectedLength - 1)
-            : '/^[a-z][a-z0-9]{3,31}$/';
+        // Fast character-by-character validation
+        // First character must be lowercase letter
+        if ($id[0] < 'a' || $id[0] > 'z') {
+            return false;
+        }
 
-        return preg_match($pattern, $id) === 1;
+        // Remaining characters must be lowercase alphanumeric
+        $validChars = true;
+        for ($i = 1; $i < $length; $i++) {
+            $char = $id[$i];
+            $isDigit = $char >= '0' && $char <= '9';
+            $isLowerLetter = $char >= 'a' && $char <= 'z';
+
+            if (!$isDigit && !$isLowerLetter) {
+                $validChars = false;
+
+                break;
+            }
+        }
+
+        return $validChars;
     }
 
     /**
-     * @throws Exception
+     * Returns the CUID string when the object is used in string context.
+     *
+     * @return string The cached CUID string value.
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->value;
     }
 
     /**
-     * @return array<array-key, mixed>
-     * @throws Exception
-     */
-    private function generateRandom(): array
-    {
-        $result = unpack('C*', random_bytes($this->length));
-        return $result === false ? [] : $result;
-    }
-
-    private static function generateTimestamp(): int
-    {
-        return (int) (new DateTime())->format('Uv');
-    }
-
-    /**
-     * @throws Exception
+     * Returns the CUID string representation.
+     *
+     * @return string The cached CUID string value.
      */
     public function toString(): string
     {
-        return $this->render();
+        return $this->value;
     }
 
     /**
-     * @inheritdoc
-     * @throws Exception
+     * Specifies data to be serialized to JSON.
+     *
+     * @return string The CUID string value for JSON encoding.
      */
     #[Override]
     public function jsonSerialize(): string
     {
-        return $this->render();
+        return $this->value;
     }
 
     /**
-     * @throws Exception
-     * @throws BadParameterException
+     * Generates cryptographically secure random bytes.
+     *
+     * Uses PHP's random_bytes() which provides CSPRNG (Cryptographically Secure
+     * Pseudo-Random Number Generator) for high-quality entropy.
+     *
+     * @param int<1, max> $length Number of random bytes to generate.
+     *
+     * @return string Binary string of random bytes.
+     *
+     * @throws Exception If an appropriate source of randomness cannot be found.
+     */
+    private static function generateRandom(int $length): string
+    {
+        return random_bytes($length);
+    }
+
+    /**
+     * Generates current timestamp in milliseconds.
+     *
+     * Uses hrtime() high-resolution monotonic timer for better performance and precision
+     * compared to DateTime object creation. The monotonic clock is not affected by system
+     * time adjustments.
+     *
+     * @return int Current timestamp in milliseconds since an arbitrary epoch.
+     */
+    private static function generateTimestamp(): int
+    {
+        return (int) (hrtime(as_number: true) / 1_000_000);
+    }
+
+    /**
+     * Renders the CUID2 by hashing all components and converting to base36.
+     *
+     * Process:
+     * 1. Verifies SHA3-512 algorithm support
+     * 2. Initializes SHA3-512 hash context
+     * 3. Updates hash with timestamp, counter, random bytes, and fingerprint (binary data)
+     * 4. Finalizes hash to get base16 (hex) string
+     * 5. Converts base16 to base36 using GMP (preferred) or math-php fallback
+     * 6. Prepends random letter prefix and truncates to requested length
+     *
+     * @return string The final CUID2 identifier string.
+     *
+     * @throws InvalidOperationException If SHA3-512 algorithm is not supported.
+     * @throws BadParameterException If base conversion fails (should never occur).
      */
     private function render(): string
     {
         self::$isAlgorithmSupported ??= self::isSupportedAlgorithm('sha3-512');
         if (!self::$isAlgorithmSupported) {
+            // @codeCoverageIgnoreStart
             // phpcs:ignore Generic.Files.LineLength
             throw new InvalidOperationException('SHA3-512 appears to be unsupported - make sure you have support for it, or upgrade your version of PHP.');
+            // @codeCoverageIgnoreEnd
         }
 
         $hash = hash_init('sha3-512');
 
-        hash_update($hash, (string)$this->timestamp);
-        hash_update($hash, (string)$this->counter);
-
-        hash_update($hash, bin2hex(pack('C*', ...$this->random)));
-        hash_update($hash, bin2hex(pack('C*', ...$this->fingerprint)));
+        hash_update($hash, (string) $this->timestamp);
+        hash_update($hash, (string) $this->counter);
+        hash_update($hash, $this->random);
+        hash_update($hash, $this->fingerprint);
 
         $hash = hash_final($hash);
 
@@ -178,11 +299,19 @@ final class Cuid2 implements JsonSerializable
     }
 
     /**
-     * Converts Base16 to Base36
+     * Converts a base16 (hexadecimal) string to base36.
      *
-     * @param string $value
-     * @return string
-     * @throws BadParameterException
+     * Uses GMP extension if available for significantly better performance,
+     * otherwise falls back to math-php library for arbitrary precision arithmetic.
+     *
+     * Base36 encoding uses 0-9 and a-z (36 characters total), producing shorter
+     * strings than hexadecimal while remaining URL-safe and case-insensitive.
+     *
+     * @param string $value Base16 (hexadecimal) string to convert.
+     *
+     * @return string The value encoded in base36.
+     *
+     * @throws BadParameterException If base conversion fails (should never occur with valid input).
      */
     private static function convert(string $value): string
     {
@@ -191,18 +320,23 @@ final class Cuid2 implements JsonSerializable
         }
 
         $integer = BaseEncoderDecoder::createArbitraryInteger($value, 16);
+
         return BaseEncoderDecoder::toBase($integer, 36, self::BASE36_ALPHANUMERIC);
     }
 
     /**
-     * Checks if the given algorithm is supported.
+     * Checks if a hash algorithm is supported by the current PHP installation.
      *
-     * @param string $algorithm the algorithm to check.
-     * @return bool true if the algorithm is supported, false otherwise.
+     * Results are cached in a static property to avoid repeated calls to hash_algos().
+     *
+     * @param string $algorithm Hash algorithm name to check (e.g., 'sha3-512').
+     *
+     * @return bool True if the algorithm is supported, false otherwise.
      */
     private static function isSupportedAlgorithm(string $algorithm): bool
     {
         self::$algorithmsCache ??= hash_algos();
+
         return in_array($algorithm, self::$algorithmsCache, true);
     }
 }

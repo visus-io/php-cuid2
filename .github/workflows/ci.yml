@@ -2,64 +2,142 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "renovate.json"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/workflows/release.yml"
+
   pull_request:
+    paths-ignore:
+      - "**.md"
+      - "renovate.json"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/workflows/release.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  static-analysis:
+  coding-standards:
+    name: Coding Standards
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
           show-progress: false
-      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
         with:
-          php-version: '8.4'
+          php-version: 'latest'
           tools: composer
-          extensions: xdebug
-      - uses: actions/cache@v4
+          coverage: none
+
+      - name: Composer Install
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+
+      - name: Check Syntax
+        run: composer dev:lint:syntax
+
+      - name: Check Code Style
+        run: composer dev:lint:style
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          path: |
-            vendor
-            ~/.composer/cache
-          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: composer-${{ runner.os }}-
-      - run: composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
-      - run: composer normalize --dry-run
-      - run: composer validate
-      - run: composer phpstan -- --ansi
-      - run: composer psalm
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
+        with:
+          php-version: 'latest'
+          tools: composer
+          coverage: none
+
+      - name: Composer Install
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+
+      - name: Run Static Analysis
+        run: composer dev:analyze:phpstan
+
+  code-coverage:
+    name: Code Coverage
+    needs: [coding-standards, static-analysis]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
+        with:
+          php-version: 'latest'
+          tools: composer
+          extensions: gmp
+          coverage: xdebug
+
+      - name: Composer Install
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+
+      - name: Run Tests with Coverage
+        run: composer dev:test:coverage:ci
+
+      - name: Upload to SonarCloud
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # 7.0.0
+        env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   unit-tests:
-    needs: [static-analysis]
-    runs-on: ubuntu-latest
+    name: Unit Tests
+    needs: [coding-standards, static-analysis]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+        fail-fast: false
+        matrix:
+            php-version: ['8.2', '8.3', '8.4', '8.5']
+            os: [ubuntu-latest, windows-latest]
+
     steps:
-      - uses: actions/checkout@v6
+      - name: Configure Git for Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          git config --system core.autocrlf false
+          git config --system core.eol lf
+
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
           show-progress: false
-      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
         with:
-          php-version: '8.4'
+          php-version: ${{ matrix.php-version }}
           tools: composer
-          coverage: xdebug
-      - uses: actions/cache@v4
-        with:
-          path: |
-            vendor
-            ~/.composer/cache
-          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: composer-${{ runner.os }}-
-      - run: composer install --quiet --no-ansi --no-interaction --no-progress --prefer-dist
-      - run: composer normalize --dry-run
-      - run: composer validate
-      - run: vendor/bin/phpunit || true
-      - uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          extensions: gmp
+          coverage: none
+
+      - name: Composer Install
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+
+      - name: Run Unit Tests
+        run: composer dev:test:unit
