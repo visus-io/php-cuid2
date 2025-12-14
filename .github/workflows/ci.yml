@@ -42,6 +42,8 @@ jobs:
 
       - name: Composer Install
         uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        with:
+          custom-cache-key: composer-${{ runner.os }}-${{ hashFiles('**/composer.json') }}
 
       - name: Check Syntax
         run: composer dev:lint:syntax
@@ -69,6 +71,8 @@ jobs:
 
       - name: Composer Install
         uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        with:
+          custom-cache-key: composer-${{ runner.os }}-${{ hashFiles('**/composer.json') }}
 
       - name: Run Static Analysis
         run: composer dev:analyze:phpstan
@@ -95,6 +99,8 @@ jobs:
 
       - name: Composer Install
         uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        with:
+          custom-cache-key: composer-${{ runner.os }}-${{ hashFiles('**/composer.json') }}
 
       - name: Run Tests with Coverage
         run: composer dev:test:coverage:ci
@@ -138,6 +144,8 @@ jobs:
 
       - name: Composer Install
         uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        with:
+          custom-cache-key: composer-${{ matrix.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
 
       - name: Run Unit Tests
         run: composer dev:test:unit
