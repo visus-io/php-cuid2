@@ -6,8 +6,6 @@ namespace Visus\Cuid2;
 
 use Exception;
 use JsonSerializable;
-use MathPHP\Exception\BadParameterException;
-use MathPHP\Functions\BaseEncoderDecoder;
 use OutOfRangeException;
 use Override;
 
@@ -43,11 +41,6 @@ use Override;
 final class Cuid2 implements JsonSerializable
 {
     /**
-     * Base36 alphabet used for encoding (0-9, a-z).
-     */
-    public const BASE36_ALPHANUMERIC = '0123456789abcdefghijklmnopqrstuvwxyz';
-
-    /**
      * Cached list of available hash algorithms.
      *
      * @var array<int, string>|null
@@ -72,7 +65,7 @@ final class Cuid2 implements JsonSerializable
     /**
      * Configured length of the CUID string.
      *
-     * @var int<1, max>
+     * @var int<4, 32>
      */
     private readonly int $length;
 
@@ -106,7 +99,7 @@ final class Cuid2 implements JsonSerializable
      *
      * @throws OutOfRangeException If $maxLength is less than 4 or greater than 32.
      * @throws Exception If random byte generation fails (extremely rare).
-     * @throws BadParameterException If base conversion fails (should never occur).
+     * @throws InvalidOperationException If SHA3-512 algorithm is not supported (extremely rare).
      */
     public function __construct(int $maxLength = 24)
     {
@@ -137,7 +130,7 @@ final class Cuid2 implements JsonSerializable
      *
      * @throws OutOfRangeException If $maxLength is less than 4 or greater than 32.
      * @throws Exception If random byte generation fails (extremely rare).
-     * @throws BadParameterException If base conversion fails (should never occur).
+     * @throws InvalidOperationException If SHA3-512 algorithm is not supported (extremely rare).
      */
     public static function generate(int $maxLength = 24): Cuid2
     {
@@ -272,7 +265,6 @@ final class Cuid2 implements JsonSerializable
      * @return string The final CUID2 identifier string.
      *
      * @throws InvalidOperationException If SHA3-512 algorithm is not supported.
-     * @throws BadParameterException If base conversion fails (should never occur).
      */
     private function render(): string
     {
@@ -302,7 +294,8 @@ final class Cuid2 implements JsonSerializable
      * Converts a base16 (hexadecimal) string to base36.
      *
      * Uses GMP extension if available for significantly better performance,
-     * otherwise falls back to math-php library for arbitrary precision arithmetic.
+     * otherwise falls back to the Utils::hexToBase36() method for arbitrary
+     * precision arithmetic.
      *
      * Base36 encoding uses 0-9 and a-z (36 characters total), producing shorter
      * strings than hexadecimal while remaining URL-safe and case-insensitive.
@@ -310,8 +303,6 @@ final class Cuid2 implements JsonSerializable
      * @param string $value Base16 (hexadecimal) string to convert.
      *
      * @return string The value encoded in base36.
-     *
-     * @throws BadParameterException If base conversion fails (should never occur with valid input).
      */
     private static function convert(string $value): string
     {
@@ -319,9 +310,7 @@ final class Cuid2 implements JsonSerializable
             return gmp_strval(gmp_init($value, 16), 36);
         }
 
-        $integer = BaseEncoderDecoder::createArbitraryInteger($value, 16);
-
-        return BaseEncoderDecoder::toBase($integer, 36, self::BASE36_ALPHANUMERIC);
+        return Utils::hexToBase36($value);
     }
 
     /**
