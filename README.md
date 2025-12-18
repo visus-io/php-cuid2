@@ -27,6 +27,7 @@ A PHP implementation of collision-resistant identifiers that are secure, URL-saf
   - [Validation](#validation)
 - [Considerations](#considerations)
   - [Performance: GMP Extension](#performance-gmp-extension)
+- [Contributing](#contributing)
 
 </details>
 
@@ -211,3 +212,14 @@ extension=gmp
 ```
 
 Run `php -m | grep gmp` (Unix) or `php -m | findstr gmp` (Windows) to verify the extension is loaded.
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+
+- Setting up your development environment
+- Running tests and code quality checks
+- Coding standards and conventions
+- Submitting pull requests
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/) and maintains 100% code coverage.
