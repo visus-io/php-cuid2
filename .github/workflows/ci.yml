@@ -41,7 +41,7 @@ jobs:
           coverage: none
 
       - name: Composer Install
-        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # 3.1.1
         with:
           custom-cache-key: composer-${{ runner.os }}-${{ hashFiles('**/composer.json') }}
 
@@ -70,7 +70,7 @@ jobs:
           coverage: none
 
       - name: Composer Install
-        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # 3.1.1
         with:
           custom-cache-key: composer-${{ runner.os }}-${{ hashFiles('**/composer.json') }}
 
@@ -98,7 +98,7 @@ jobs:
           coverage: xdebug
 
       - name: Composer Install
-        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # 3.1.1
         with:
           custom-cache-key: composer-${{ runner.os }}-${{ hashFiles('**/composer.json') }}
 
@@ -106,7 +106,7 @@ jobs:
         run: composer dev:test:coverage:ci
 
       - name: Upload to SonarCloud
-        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # 7.0.0
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # v7.0.0
         env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -143,7 +143,7 @@ jobs:
           coverage: none
 
       - name: Composer Install
-        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # 3.1.1
         with:
           custom-cache-key: composer-${{ matrix.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
 
