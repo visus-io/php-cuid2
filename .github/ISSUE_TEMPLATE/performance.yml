@@ -1,0 +1,187 @@
+name: Performance Issue
+description: Report performance problems or suggest optimizations
+title: '[Performance]: '
+labels: ['Issue: Pending Confirmation', 'Priority: Medium']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping us improve library performance!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Performance Issue Description
+      description: Describe the performance problem you're experiencing
+      placeholder: When I do X, the library is slow/uses too much memory/etc.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What kind of performance issue is this?
+      options:
+        - Slow execution time
+        - High memory usage
+        - Inefficient algorithm
+        - Unnecessary computations
+        - Concurrency issues
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the library is affected?
+      multiple: true
+      options:
+        - CUID2 Generation
+        - Counter
+        - Fingerprint
+        - Base Conversion (hexToBase36)
+        - SHA3-512 Hashing
+        - Random Number Generation
+        - GMP vs Pure PHP Fallback
+        - Validation
+        - Other
+    validations:
+      required: false
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce the performance issue?
+      placeholder: |
+        1. Generate X CUIDs in a loop...
+        2. With these parameters...
+        3. Observe slow performance...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Code Sample
+      description: Minimal code that demonstrates the issue
+      render: php
+      placeholder: |
+        <?php
+        use Visus\Cuid2\Cuid2;
+
+        $cuid2 = new Cuid2();
+        // Your code here
+    validations:
+      required: false
+
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Performance Metrics
+      description: Any measurements you've collected
+      placeholder: |
+        - Execution time: 5 seconds for 10,000 CUIDs
+        - Memory usage: 500MB
+        - Operations per second: 100
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Performance
+      description: What performance did you expect?
+      placeholder: I expected this to complete in...
+    validations:
+      required: false
+
+  - type: textarea
+    id: data-scale
+    attributes:
+      label: Data Scale
+      description: What is the scale of operations you're working with?
+      placeholder: |
+        - Number of CUIDs generated: 100,000
+        - Concurrent requests: 50
+        - Frequency: 1000 per second
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: php-cuid2 Version
+      description: Which version of visus/cuid2 are you using?
+      placeholder: e.g., 2.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP Version
+      description: Which PHP version are you using?
+      placeholder: e.g., 8.2.0, 8.3.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Runtime Environment
+      options:
+        - PHP CLI
+        - Apache
+        - Nginx + PHP-FPM
+        - Laravel
+        - Symfony
+        - Other Framework
+        - Docker
+        - Other
+    validations:
+      required: false
+
+  - type: dropdown
+    id: gmp-status
+    attributes:
+      label: GMP Extension Status
+      description: Is the GMP extension installed and enabled?
+      options:
+        - 'Yes - GMP extension enabled'
+        - 'No - Using pure PHP fallback'
+        - 'Unknown'
+    validations:
+      required: false
+
+  - type: textarea
+    id: profiling
+    attributes:
+      label: Profiling Data
+      description: Any profiling information (Xdebug, Blackfire, etc.)
+      placeholder: Paste profiling results or attach screenshots
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context about the performance issue
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this hasn't been reported already
+          required: true
+        - label: I have tested with the latest version of the library
+          required: false
+        - label: I have profiled or measured the performance issue
+          required: false

@@ -1,4 +1,11 @@
+blank_issues_enabled: false
 contact_links:
-  - name: php-cuid2 Community Support
-    url: https://github.com/visus/php-cuid2/discussions
-    about: For general discussions, questions, and answers
+  - name: Ask a Question
+    url: https://github.com/visus/php-cuid2/discussions/new?category=q-a
+    about: Ask questions and get help using the library in Discussions
+  - name: CUID2 Specification
+    url: https://github.com/paralleldrive/cuid2
+    about: Official CUID2 specification and reference implementation
+  - name: Library Documentation
+    url: https://github.com/visus/php-cuid2#readme
+    about: Read the full library documentation and examples
