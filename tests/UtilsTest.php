@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Visus\Cuid2\Test;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Visus\Cuid2\Utils;
 
@@ -56,9 +57,7 @@ class UtilsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider hexToBase36Provider
-     */
+    #[DataProvider('hexToBase36Provider')]
     public function testHexToBase36Conversion(string $hex, string $expected): void
     {
         $result = Utils::hexToBase36($hex);
@@ -126,9 +125,7 @@ class UtilsTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider invalidHexCharactersProvider
-     */
+    #[DataProvider('invalidHexCharactersProvider')]
     public function testHexToBase36HandlesInvalidCharactersGracefully(string $hex, string $_expected): void
     {
         // Invalid characters are treated as 0 based on the match default case
