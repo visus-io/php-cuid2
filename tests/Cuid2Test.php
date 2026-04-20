@@ -6,6 +6,7 @@ namespace Visus\Cuid2\Test;
 
 use Exception;
 use OutOfRangeException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Visus\Cuid2\Cuid2;
 
@@ -119,9 +120,8 @@ class Cuid2Test extends TestCase
 
     /**
      * @throws Exception
-     *
-     * @dataProvider invalidLengthProvider
      */
+    #[DataProvider('invalidLengthProvider')]
     public function testThrowsExceptionForInvalidLength(int $length): void
     {
         $this->expectException(OutOfRangeException::class);
@@ -200,9 +200,8 @@ class Cuid2Test extends TestCase
 
     /**
      * @throws Exception
-     *
-     * @dataProvider validLengthProvider
      */
+    #[DataProvider('validLengthProvider')]
     public function testGeneratesCorrectLength(int $length): void
     {
         $cuid = new Cuid2($length);
@@ -226,9 +225,8 @@ class Cuid2Test extends TestCase
 
     /**
      * @throws Exception
-     *
-     * @dataProvider validLengthProvider
      */
+    #[DataProvider('validLengthProvider')]
     public function testStaticGenerateCreatesCustomLength(int $length): void
     {
         $cuid = Cuid2::generate($length);
@@ -240,9 +238,8 @@ class Cuid2Test extends TestCase
 
     /**
      * @throws Exception
-     *
-     * @dataProvider invalidLengthProvider
      */
+    #[DataProvider('invalidLengthProvider')]
     public function testStaticGenerateThrowsExceptionForInvalidLength(int $length): void
     {
         $this->expectException(OutOfRangeException::class);
@@ -262,17 +259,13 @@ class Cuid2Test extends TestCase
         $this->assertNotEquals((string) $cuid1, (string) $cuid2);
     }
 
-    /**
-     * @dataProvider validCuidProvider
-     */
+    #[DataProvider('validCuidProvider')]
     public function testIsValidAcceptsValidCuids(string $cuid, ?int $expectedLength = null): void
     {
         $this->assertTrue(Cuid2::isValid($cuid, $expectedLength));
     }
 
-    /**
-     * @dataProvider invalidCuidProvider
-     */
+    #[DataProvider('invalidCuidProvider')]
     public function testIsValidRejectsInvalidCuids(string $cuid, ?int $expectedLength = null): void
     {
         $this->assertFalse(Cuid2::isValid($cuid, $expectedLength));

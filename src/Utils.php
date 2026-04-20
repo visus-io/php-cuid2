@@ -137,6 +137,8 @@ final class Utils
      */
     public static function hexToBase36(string $hexValue): string
     {
+        $hexValue = preg_replace('/[^0-9a-fA-F]/', '', $hexValue) ?? '';
+
         if ($hexValue === '' || $hexValue === '0') {
             return '0';
         }
