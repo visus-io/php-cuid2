@@ -32,9 +32,9 @@ final class ValidationBench
     #[Iterations(10)]
     #[Warmup(2)]
     #[Groups(['validation', 'valid'])]
-    public function benchValidateValidCuid(array $params): void
+    public function benchValidateValidCuid(array $params): bool
     {
-        Cuid2::isValid($params['cuid']);
+        return Cuid2::isValid($params['cuid']);
     }
 
     /**
@@ -47,9 +47,9 @@ final class ValidationBench
     #[Iterations(10)]
     #[Warmup(2)]
     #[Groups(['validation', 'valid', 'strict'])]
-    public function benchValidateValidCuidStrictLength(array $params): void
+    public function benchValidateValidCuidStrictLength(array $params): bool
     {
-        Cuid2::isValid($params['cuid'], $params['length']);
+        return Cuid2::isValid($params['cuid'], $params['length']);
     }
 
     /**
@@ -62,9 +62,9 @@ final class ValidationBench
     #[Iterations(10)]
     #[Warmup(2)]
     #[Groups(['validation', 'invalid'])]
-    public function benchValidateInvalidCuid(array $params): void
+    public function benchValidateInvalidCuid(array $params): bool
     {
-        Cuid2::isValid($params['cuid']);
+        return Cuid2::isValid($params['cuid']);
     }
 
     /**
@@ -74,9 +74,9 @@ final class ValidationBench
     #[Iterations(10)]
     #[Warmup(2)]
     #[Groups(['validation', 'invalid', 'edge'])]
-    public function benchValidateEmptyString(): void
+    public function benchValidateEmptyString(): bool
     {
-        Cuid2::isValid('');
+        return Cuid2::isValid('');
     }
 
     /**
@@ -87,9 +87,9 @@ final class ValidationBench
     #[Iterations(10)]
     #[Warmup(2)]
     #[Groups(['validation', 'invalid', 'edge'])]
-    public function benchValidateLongString(): void
+    public function benchValidateLongString(): bool
     {
-        Cuid2::isValid($this->longString);
+        return Cuid2::isValid($this->longString);
     }
 
     /**

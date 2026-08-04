@@ -65,7 +65,7 @@ The following are not considered security vulnerabilities:
 - **Resource exhaustion DoS** from generating large numbers of IDs
 - **Non-security build or configuration issues**
 - **Performance characteristics** unless they enable timing attacks
-- **Compatibility issues** with unsupported PHP versions (< 8.2)
+- **Compatibility issues** with unsupported PHP versions (< 8.3)
 
 ## Security Best Practices
 
@@ -132,9 +132,8 @@ The library incorporates multiple sources for machine/process fingerprinting:
 
 ### Supported Versions
 
-- **PHP 8.2+:** Full support with strict type checking enabled
-- **PHP 8.3:** Native support for PHP 8.3 features
-- **PHP 8.2:** Uses `symfony/polyfill-php83` for PHP 8.3 features
+- **PHP 8.3+:** Required. Full support with strict type checking enabled and native support for PHP 8.3+ features (no polyfills needed)
+- **PHP 8.4/8.5:** Also supported and tested in CI
 
 ### Performance Considerations
 

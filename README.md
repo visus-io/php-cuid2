@@ -83,7 +83,7 @@ composer require visus/cuid2
 ```
 
 **Requirements:**
-- PHP 8.2 or higher
+- PHP 8.3 or higher
 - SHA3-512 hashing algorithm support (typically available in PHP 7.1+)
 
 **Recommended:**

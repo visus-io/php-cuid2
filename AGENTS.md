@@ -1,10 +1,10 @@
 # Agent Instructions
 
-`php-cuid2` (`visus/cuid2`) is a PHP 8.2+ library implementing the [CUID2 spec](https://github.com/paralleldrive/cuid2) — collision-resistant, URL-safe, horizontally scalable IDs.
+`php-cuid2` (`visus/cuid2`) is a PHP 8.3+ library implementing the [CUID2 spec](https://github.com/paralleldrive/cuid2) — collision-resistant, URL-safe, horizontally scalable IDs.
 
 ## Toolchain
 
-- PHP 8.2+ minimum; `declare(strict_types=1);` on every file. CI runs PHP 8.3/8.4/8.5 on ubuntu and windows.
+- PHP 8.3+ minimum; `declare(strict_types=1);` on every file. CI runs PHP 8.3/8.4/8.5 on ubuntu and windows.
 - Composer 2 for dependencies. PHPStan level `max` + bleeding edge for static analysis. PHPCS with PSR-12 (`phpcs.xml`) for style. PHPUnit 12 for tests. PhpBench for benchmarks.
 - `ext-gmp` is an optional suggested dependency — CI enables it; both the GMP and pure-PHP code paths must keep working and stay in sync.
 

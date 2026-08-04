@@ -44,7 +44,7 @@ final class Fingerprint
      * Windows limits NetBIOS names to 15 characters. This constant ensures the random
      * fallback identity matches the expected length constraints of the platform.
      */
-    private const WINDOWS_HOSTNAME_LENGTH = 15;
+    private const int WINDOWS_HOSTNAME_LENGTH = 15;
 
     /**
      * Maximum hostname length on Unix-like systems.
@@ -52,7 +52,7 @@ final class Fingerprint
      * Unix-like systems (Linux, macOS, BSD) typically support hostnames up to 64 characters,
      * but we use 32 characters to balance uniqueness with performance and storage efficiency.
      */
-    private const UNIX_HOSTNAME_LENGTH = 32;
+    private const int UNIX_HOSTNAME_LENGTH = 32;
 
     /**
      * The singleton instance.
@@ -199,6 +199,9 @@ final class Fingerprint
         // Fallback if native gethostname() returns false/empty (extremely rare)
         // The compat.php polyfill already handles missing gethostname() function
         // @codeCoverageIgnoreStart
+        // PHPStan's bundled stub narrows gethostname() to `string`, but PHP's actual
+        // signature is `string|false` (see ReflectionFunction), so this check is live at runtime.
+        // @phpstan-ignore identical.alwaysFalse
         if ($identity === false || $identity === '') {
             $length = PHP_OS_FAMILY === 'Windows'
                 ? self::WINDOWS_HOSTNAME_LENGTH

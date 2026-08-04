@@ -47,7 +47,7 @@ final class Counter
      *
      * @see https://github.com/paralleldrive/cuid2 CUID2 specification
      */
-    private const RANGE = 476782367;
+    private const int RANGE = 476782367;
 
     /**
      * The singleton instance.

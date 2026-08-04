@@ -12,7 +12,7 @@ final class Utils
     /**
      * Base36 alphabet for encoding (0-9, a-z).
      */
-    private const BASE36_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
+    private const string BASE36_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
 
     /**
      * Prevents instantiation of utility class.

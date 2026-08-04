@@ -22,7 +22,7 @@ This project follows standard open source community guidelines. Please be respec
 
 ### Prerequisites
 
-- PHP 8.2 or higher
+- PHP 8.3 or higher
 - Composer
 - Git
 - Recommended: GMP extension for better performance

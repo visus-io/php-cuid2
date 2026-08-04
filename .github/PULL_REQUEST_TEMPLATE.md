@@ -108,8 +108,8 @@ Related to #
 
 <!-- Verify PHP version compatibility -->
 
-- [ ] Tested on PHP 8.2
-- [ ] Tested on PHP 8.3 (if available)
+- [ ] Tested on PHP 8.3
+- [ ] Tested on PHP 8.4/8.5 (if available)
 - [ ] Works with GMP extension enabled
 - [ ] Works with pure PHP fallback (GMP disabled)
 
