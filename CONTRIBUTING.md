@@ -1,6 +1,6 @@
 # Contributing to php-cuid2
 
-Thank you for your interest in contributing to php-cuid2! This document provides guidelines and instructions for contributing to this project.
+Thank you for your interest in this project. This document gives you guidelines and instructions for how to contribute to php-cuid2.
 
 ## Table of Contents
 
@@ -16,22 +16,22 @@ Thank you for your interest in contributing to php-cuid2! This document provides
 
 ## Code of Conduct
 
-This project follows standard open source community guidelines. Please be respectful and constructive in all interactions.
+This project follows standard open-source community guidelines. Be respectful and constructive in every interaction. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the full guidelines.
 
 ## Getting Started
 
 ### Prerequisites
 
-- PHP 8.3 or higher
+- PHP 8.3 or a later version
 - Composer
 - Git
-- Recommended: GMP extension for better performance
-- Optional: Xdebug for code coverage reports
+- Recommended: the GMP extension, for better performance
+- Optional: Xdebug, for code coverage reports
 
 ### Fork and Clone
 
-1. Fork the repository on GitHub
-2. Clone your fork locally:
+1. Fork the repository on GitHub.
+2. Clone your fork to your local machine:
    ```bash
    git clone https://github.com/YOUR_USERNAME/php-cuid2.git
    cd php-cuid2
@@ -45,32 +45,34 @@ This project follows standard open source community guidelines. Please be respec
 
 ### Install Dependencies
 
+Run this command to install dependencies:
+
 ```bash
 composer install
 ```
 
-This will install:
-- Development dependencies (PHPUnit, PHPStan, PHP_CodeSniffer, etc.)
-- Git hooks via CaptainHook
-- Project dependencies
+This command installs:
+- The development dependencies: PHPUnit, PHPStan, PHP_CodeSniffer, and other tools
+- The Git hooks, through CaptainHook
+- The project dependencies
 
 ### Git Hooks
 
-The project uses CaptainHook to automatically enforce quality standards:
+This project uses CaptainHook to enforce quality standards automatically.
 
 **Pre-commit hooks:**
-- Validates `composer.json` when modified
-- Runs `composer normalize` (dry-run) for composer.json changes
-- Runs syntax checking on staged PHP files (`composer dev:lint:syntax`)
-- Runs code style checking on staged PHP files (`composer dev:lint:style`)
+- Validate `composer.json` when you modify the file
+- Run `composer normalize` in dry-run mode when you change `composer.json`
+- Check the syntax of staged PHP files, with `composer dev:lint:syntax`
+- Check the code style of staged PHP files, with `composer dev:lint:style`
 
 **Commit-msg hook:**
-- Validates conventional commit message format
+- Validate the Conventional Commits format of the commit message
 
 **Post-merge/Post-checkout hooks:**
-- Auto-runs `composer install` when composer files change
+- Run `composer install` automatically when Composer files change
 
-Hooks are installed automatically during `composer install`.
+The `composer install` command installs these hooks automatically.
 
 ## Development Workflow
 
@@ -79,11 +81,11 @@ Hooks are installed automatically during `composer install`.
    git checkout -b feature/my-new-feature
    ```
 
-2. Make your changes following the [Code Style](#code-style) guidelines
+2. Make your changes. Follow the [Code Style](#code-style) guidelines.
 
-3. Add tests for your changes (see [Testing](#testing))
+3. Add tests for your changes. See [Testing](#testing).
 
-4. Run the full test suite:
+4. Run the unit tests:
    ```bash
    composer dev:test:unit
    ```
@@ -98,32 +100,32 @@ Hooks are installed automatically during `composer install`.
    composer dev:lint:style
    ```
 
-7. Run all checks at once:
+7. Run every check at once:
    ```bash
    composer dev:test
    ```
-   This runs linting, benchmarks, static analysis, and unit tests.
+   This command runs linting, benchmarks, static analysis, and unit tests.
 
-8. Commit your changes (see [Commit Messages](#commit-messages))
+8. Commit your changes. See [Commit Messages](#commit-messages).
 
-9. Push to your fork and submit a pull request
+9. Push your branch to your fork. Submit a pull request.
 
 ## Testing
 
 ### Running Tests
 
 ```bash
-# Run unit tests (no coverage)
+# Run the unit tests, without coverage
 composer dev:test:unit
 
-# Run tests with HTML coverage report (requires Xdebug)
+# Run the tests and generate an HTML coverage report (needs Xdebug)
 composer dev:test:coverage:html
-# View report at: build/coverage/html/index.html
+# View the report at build/coverage/html/index.html
 
-# Run tests with coverage for CI (requires Xdebug)
+# Run the tests with coverage for CI (needs Xdebug)
 composer dev:test:coverage:ci
 
-# Run full test suite (linting, benchmarks, analysis, unit tests)
+# Run the full test suite: linting, benchmarks, analysis, and unit tests
 composer dev:test
 ```
 
@@ -133,24 +135,24 @@ You can also run PHPUnit directly:
 # Run all tests
 vendor/bin/phpunit
 
-# Run tests with coverage
+# Run the tests with coverage
 XDEBUG_MODE=coverage vendor/bin/phpunit
 
-# Run specific test class
+# Run a specific test class
 vendor/bin/phpunit tests/Cuid2Test.php
 
-# Run specific test method
+# Run a specific test method
 vendor/bin/phpunit --filter testMethodName
 ```
 
 ### Testing Requirements
 
-- **All code changes require corresponding tests**
-- **Maintain 100% code coverage** (excluding `src/compat.php`)
-- Tests are located in the `tests/` directory
-- Use data providers for parameterized tests
-- Test both success and failure scenarios
-- Test edge cases and boundary conditions
+- Add a test for every code change.
+- Maintain 100% code coverage. This requirement excludes `src/compat.php`.
+- Put tests in the `tests/` directory.
+- Use data providers for parameterized tests.
+- Test both success and failure scenarios.
+- Test edge cases and boundary conditions.
 
 ### Writing Tests
 
@@ -185,35 +187,35 @@ class MyFeatureTest extends TestCase
 
 ### Standards
 
-- **PSR-12**: All code must follow PSR-12 coding standard
-- **Strict Types**: Enable strict types in all PHP files: `declare(strict_types=1)`
-- **Type Safety**: All parameters and return types must be explicitly declared
-- **PHPDoc**: Use PHPDoc blocks for complex array types and class/method documentation
+- **PSR-12**: Follow the PSR-12 coding standard for all code.
+- **Strict Types**: Add `declare(strict_types=1)` to every PHP file.
+- **Type Safety**: Declare every parameter type and return type explicitly.
+- **PHPDoc**: Use PHPDoc blocks for complex array types. Use PHPDoc blocks to document classes and methods.
 
 ### Checking and Fixing Code Style
 
 ```bash
-# Check code style compliance
+# Check code style
 composer dev:lint:style
 
-# Auto-fix code style issues
+# Fix code style issues automatically
 composer dev:lint:fix
 
-# Check syntax errors
+# Check for syntax errors
 composer dev:lint:syntax
 
-# Run all linting checks (syntax + style)
+# Run every linting check: syntax and style
 composer dev:lint
 ```
 
 ### Static Analysis
 
-The project uses PHPStan at maximum level:
+This project uses PHPStan at the maximum level:
 
 ```bash
 composer dev:analyze:phpstan
 
-# Or run all analysis checks
+# Or run every analysis check
 composer dev:analyze
 ```
 
@@ -221,7 +223,7 @@ All code must pass PHPStan analysis with no errors.
 
 ### Composer Validation
 
-When modifying `composer.json`:
+When you modify `composer.json`, run these commands:
 
 ```bash
 # Validate composer.json
@@ -233,13 +235,13 @@ composer normalize
 
 ### Benchmarking
 
-To ensure performance remains optimal:
+Run this command to check performance:
 
 ```bash
 composer dev:benchmark
 ```
 
-This runs performance benchmarks located in `tests/benchmark/`.
+This command runs the performance benchmarks in `tests/benchmark/`.
 
 ## Commit Messages
 
@@ -259,13 +261,13 @@ This project follows the [Conventional Commits](https://www.conventionalcommits.
 
 - `feat`: A new feature
 - `fix`: A bug fix
-- `docs`: Documentation only changes
-- `style`: Code style changes (formatting, missing semi colons, etc.)
-- `refactor`: Code change that neither fixes a bug nor adds a feature
-- `perf`: Performance improvement
-- `test`: Adding missing tests or correcting existing tests
-- `chore`: Changes to build process or auxiliary tools
-- `ci`: Changes to CI configuration files and scripts
+- `docs`: A change to documentation only
+- `style`: A code style change, such as formatting or a missing semicolon
+- `refactor`: A code change that does not fix a bug and does not add a feature
+- `perf`: A performance improvement
+- `test`: A new test, or a correction to an existing test
+- `chore`: A change to the build process or to an auxiliary tool
+- `ci`: A change to a CI configuration file or script
 
 ### Examples
 
@@ -293,118 +295,41 @@ git commit -m "perf(utils): improve hexToBase36 conversion speed"
 
 ### Pull Request Process
 
-1. Ensure your code passes all tests, static analysis, and code style checks:
+1. Make sure your code passes all tests, static analysis, and code style checks:
    ```bash
    composer dev:test
    ```
 
-2. Update documentation if needed (README.md, CLAUDE.md, etc.)
+2. Update the documentation if needed. Update README.md, CLAUDE.md, or other files.
 
-3. Create a pull request with a clear title and description
+3. Create a pull request. Write a clear title and description.
 
-4. Reference any related issues in the PR description (e.g., "Fixes #123")
+4. Reference related issues in the PR description. For example, write "Fixes #123".
 
-5. Wait for review and address any feedback
+5. Wait for a review. Address the feedback.
 
 ### Pull Request Checklist
 
-Before submitting your PR, verify:
+Before you submit your PR, verify these items:
 
-- [ ] Tests added/updated and passing (`composer dev:test:unit`)
-- [ ] Code coverage maintained at 100% (`composer dev:test:coverage:html`)
+- [ ] Tests are added or updated, and all tests pass (`composer dev:test:unit`)
+- [ ] Code coverage remains at 100% (`composer dev:test:coverage:html`)
 - [ ] PHPStan analysis passes (`composer dev:analyze:phpstan`)
 - [ ] Code style follows PSR-12 (`composer dev:lint:style`)
 - [ ] Syntax is valid (`composer dev:lint:syntax`)
 - [ ] Benchmarks run successfully (`composer dev:benchmark`)
-- [ ] All checks pass (`composer dev:test`)
-- [ ] Commit messages follow Conventional Commits
-- [ ] Documentation updated if needed
-- [ ] No breaking changes (or clearly documented)
+- [ ] Every check passes (`composer dev:test`)
+- [ ] Commit messages follow the Conventional Commits format
+- [ ] Documentation is updated if needed
+- [ ] No breaking changes exist. If a breaking change exists, document it clearly.
 
 ## Project Architecture
 
-### Core Components
-
-Understanding the project structure will help you contribute effectively:
-
-**Cuid2** (`src/Cuid2.php`)
-- Main class that generates CUID2 identifiers
-- Immutable once constructed
-- Implements JsonSerializable for JSON encoding
-
-**Counter** (`src/Counter.php`)
-- Singleton maintaining monotonically increasing counter
-- Prevents collisions for rapid CUID generation
-- Thread-safe through singleton pattern
-- Uses bias-free random initialization within range of 476782367
-
-**Fingerprint** (`src/Fingerprint.php`)
-- Singleton creating unique machine/process fingerprint
-- Combines hostname, process ID, environment variables, and random data
-- Ensures uniqueness across different machines/processes
-- Computed once per process lifecycle
-- Uses SHA3-512 for fingerprint generation
-
-**InvalidOperationException** (`src/InvalidOperationException.php`)
-- Custom exception class
-- Thrown when SHA3-512 hashing algorithm is unavailable
-- Used to signal invalid operations based on system state
-
-**Utils** (`src/Utils.php`)
-- Utility class for base conversion
-- Provides `hexToBase36()` method for arbitrary precision base conversion
-- Pure PHP implementation without external dependencies
-- Uses intermediate large base (100 million) for efficient arithmetic operations
-- Fallback when GMP extension unavailable
-- Final utility class with private constructor (cannot be instantiated)
-
-**compat.php** (`src/compat.php`)
-- Compatibility polyfills for missing system functions
-- Polyfills `getmypid()` - returns random value if function unavailable
-- Polyfills `gethostname()` - returns random string if function unavailable
-- Excluded from code coverage requirements
-- Auto-loaded via composer.json files configuration
-
-### CUID2 Generation Process
-
-1. **Initialization**: Random lowercase letter prefix (a-z)
-2. **Timestamp**: Current time in milliseconds
-3. **Counter**: Monotonically increasing value from singleton
-4. **Fingerprint**: Machine/process identification from singleton
-5. **Random**: Cryptographically secure random bytes
-6. **Hash**: All components hashed with SHA3-512
-7. **Convert**: Base16 hash converted to base36
-8. **Truncate**: Result trimmed to requested length (minus prefix)
-
-### Base Conversion
-
-The library uses two strategies for base16 to base36 conversion:
-- **Preferred**: GMP extension (`gmp_init` and `gmp_strval`) - significantly faster
-- **Fallback**: `Utils::hexToBase36()` - pure PHP implementation used when GMP not available
-  - Uses arbitrary precision arithmetic with intermediate large base (100 million)
-  - No external dependencies required
-  - Converts hex to large base representation, then to base36
-
-### Important Design Decisions
-
-- **Singleton Pattern**: Counter and Fingerprint persist across generations within the same process
-- **Immutability**: Cuid2 instances cannot be modified after creation
-- **SHA3-512 Required**: Library checks for algorithm availability at runtime
-- **GMP Recommended**: Significantly faster base conversion when available
-- **Length Constraints**: Valid lengths are 4-32 characters (enforced by OutOfRangeException)
-- **Format**: CUIDs always start with lowercase letter followed by base36 characters (0-9, a-z)
-
-### Validation
-
-The `Cuid2::isValid()` method performs format validation only:
-- Checks length (4-32 characters)
-- Verifies pattern (starts with lowercase letter, followed by base36 chars)
-- Does NOT guarantee the string was generated by this library
-- Optionally accepts expected length parameter for strict validation
+For the internal design of this project, see [ARCHITECTURE.md](ARCHITECTURE.md). ARCHITECTURE.md describes the generation flow, the singleton classes, the base-conversion strategy, and the compatibility polyfills.
 
 ## Development Commands Reference
 
-Quick reference for common development tasks:
+This is a quick reference for common development tasks:
 
 ```bash
 # Testing
@@ -433,9 +358,9 @@ composer dev:build:clean          # Clean build artifacts
 
 ## Questions?
 
-If you have questions about contributing, feel free to:
-- Open an issue for discussion
-- Ask in your pull request
-- Review existing issues and PRs for similar questions
+If you have questions about how to contribute, do one of these:
+- Open an issue for discussion.
+- Ask a question in your pull request.
+- Review existing issues and pull requests for similar questions.
 
-Thank you for contributing to php-cuid2!
+Thank you for your contribution to php-cuid2.
