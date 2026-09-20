@@ -97,20 +97,6 @@ final class Fingerprint
     }
 
     /**
-     * Prevents cloning of the singleton instance.
-     *
-     * Cloning would break the singleton pattern and could lead to inconsistent fingerprints,
-     * potentially causing CUID collisions across cloned instances. This method is intentionally
-     * private and empty to prevent cloning attempts.
-     *
-     * @codeCoverageIgnore
-     */
-    private function __clone(): void
-    {
-        // Prevent cloning
-    }
-
-    /**
      * Prevents unserialization of the singleton instance.
      *
      * Unserializing would create a new instance with a potentially outdated fingerprint,
@@ -122,6 +108,20 @@ final class Fingerprint
     public function __wakeup(): void
     {
         throw new InvalidOperationException('Cannot unserialize singleton');
+    }
+
+    /**
+     * Prevents cloning of the singleton instance.
+     *
+     * Cloning would break the singleton pattern and could lead to inconsistent fingerprints,
+     * potentially causing CUID collisions across cloned instances. This method is intentionally
+     * private and empty to prevent cloning attempts.
+     *
+     * @codeCoverageIgnore
+     */
+    private function __clone(): void
+    {
+        // Prevent cloning
     }
 
     /**

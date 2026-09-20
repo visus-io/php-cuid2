@@ -11,8 +11,8 @@ This document describes the internal design of `visus/cuid2`. It targets contrib
 3. Increment the `Counter` singleton. Read its new value.
 4. Read the `Fingerprint` singleton. The fingerprint is a hash of the hostname, the process ID, and environment data.
 5. Generate entropy with `random_bytes()`.
-6. Combine the timestamp, the counter, the fingerprint, and the entropy. Hash the combined value with SHA3-512.
-7. Convert the hash from hex to base36 with `Utils::hexToBase36()`.
+6. Combine the timestamp, the counter, the fingerprint, and the entropy. Hash the combined value with SHA3-512. The result is a raw 64-byte digest. It is not a hex string.
+7. Convert the raw digest to base36 with `Utils::bytesToBase36()`.
 8. Prepend the prefix to the converted hash. Truncate the result to the requested length.
 
 ## Singletons
@@ -25,15 +25,25 @@ This document describes the internal design of `visus/cuid2`. It targets contrib
 
 Do not introduce static state outside these two classes.
 
-## `Utils::hexToBase36()`
+## `Utils::hexToBase36()` and `Utils::bytesToBase36()`
 
-This method converts a hex string to base36. It selects a conversion path based on the input:
+`Cuid2::convert()` reads the raw hash digest bytes directly. It does not build a hex
+string first. It uses `gmp_import()` and `gmp_strval()` when `ext-gmp` is loaded.
+Otherwise, it calls `Utils::bytesToBase36()`.
 
-- For hex strings of 14 characters or fewer, it uses a fast path with `base_convert()`.
-- For longer hex strings, it uses chunked base-100,000,000 conversion.
-- When `ext-gmp` is loaded, it uses the GMP path instead of the pure-PHP path.
+`Utils::hexToBase36()` stays as a public entry point for other callers. It takes a hex
+string. It shares its core logic with `bytesToBase36()`.
 
-The GMP path and the pure-PHP path must produce identical output for the same input.
+- For hex strings of 14 characters or fewer, `hexToBase36()` uses `base_convert()`. This
+  is the fast path.
+- For longer hex strings, and for every call to `bytesToBase36()`, the method packs the
+  input into fixed-width base-2³² limbs. Limb 0 holds the least significant bits. The
+  method then divides the limbs by 36^5 repeatedly. Each division extracts 5 base36
+  digits at once. This cuts the number of full array scans by about 5 times. Each pass
+  tracks the most significant non-zero limb. Later passes skip limbs that are already
+  zero.
+
+The GMP path and the pure-PHP path must produce the same output for the same input.
 
 ## `src/compat.php`
 

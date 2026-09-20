@@ -30,84 +30,6 @@ class FingerprintTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetInstanceReturnsSameSingletonInstance(): void
-    {
-        $fingerprint1 = Fingerprint::getInstance();
-        $fingerprint2 = Fingerprint::getInstance();
-
-        $this->assertSame($fingerprint1, $fingerprint2);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetValueReturnsNonEmptyString(): void
-    {
-        $fingerprint = Fingerprint::getInstance();
-        $value = $fingerprint->getValue();
-
-        $this->assertNotEmpty($value);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetValueReturnsConsistentValue(): void
-    {
-        $fingerprint = Fingerprint::getInstance();
-
-        $value1 = $fingerprint->getValue();
-        $value2 = $fingerprint->getValue();
-        $value3 = $fingerprint->getValue();
-
-        $this->assertSame($value1, $value2);
-        $this->assertSame($value2, $value3);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetValueReturnsBinaryData(): void
-    {
-        $fingerprint = Fingerprint::getInstance();
-        $value = $fingerprint->getValue();
-
-        // SHA3-512 produces 64 bytes of binary data
-        $this->assertEquals(64, strlen($value));
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetValueIsDeterministicWithinProcess(): void
-    {
-        // Within the same process, fingerprint should be identical across instances
-        $fingerprint1 = Fingerprint::getInstance();
-        $value1 = $fingerprint1->getValue();
-
-        $fingerprint2 = Fingerprint::getInstance();
-        $value2 = $fingerprint2->getValue();
-
-        $this->assertSame($value1, $value2);
-        $this->assertSame($fingerprint1, $fingerprint2);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testWakeupThrowsException(): void
-    {
-        $fingerprint = Fingerprint::getInstance();
-
-        $this->expectException(InvalidOperationException::class);
-        $this->expectExceptionMessage('Cannot unserialize singleton');
-
-        $fingerprint->__wakeup();
-    }
-
-    /**
-     * @throws Exception
-     */
     public function testFingerprintIncludesProcessContext(): void
     {
         // Create a fingerprint and verify it's unique (non-zero bytes)
@@ -135,5 +57,83 @@ class FingerprintTest extends TestCase
             $currentValue = $fingerprint->getValue();
             $this->assertSame($originalValue, $currentValue);
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetInstanceReturnsSameSingletonInstance(): void
+    {
+        $fingerprint1 = Fingerprint::getInstance();
+        $fingerprint2 = Fingerprint::getInstance();
+
+        $this->assertSame($fingerprint1, $fingerprint2);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetValueIsDeterministicWithinProcess(): void
+    {
+        // Within the same process, fingerprint should be identical across instances
+        $fingerprint1 = Fingerprint::getInstance();
+        $value1 = $fingerprint1->getValue();
+
+        $fingerprint2 = Fingerprint::getInstance();
+        $value2 = $fingerprint2->getValue();
+
+        $this->assertSame($value1, $value2);
+        $this->assertSame($fingerprint1, $fingerprint2);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetValueReturnsBinaryData(): void
+    {
+        $fingerprint = Fingerprint::getInstance();
+        $value = $fingerprint->getValue();
+
+        // SHA3-512 produces 64 bytes of binary data
+        $this->assertEquals(64, strlen($value));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetValueReturnsConsistentValue(): void
+    {
+        $fingerprint = Fingerprint::getInstance();
+
+        $value1 = $fingerprint->getValue();
+        $value2 = $fingerprint->getValue();
+        $value3 = $fingerprint->getValue();
+
+        $this->assertSame($value1, $value2);
+        $this->assertSame($value2, $value3);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetValueReturnsNonEmptyString(): void
+    {
+        $fingerprint = Fingerprint::getInstance();
+        $value = $fingerprint->getValue();
+
+        $this->assertNotEmpty($value);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testWakeupThrowsException(): void
+    {
+        $fingerprint = Fingerprint::getInstance();
+
+        $this->expectException(InvalidOperationException::class);
+        $this->expectExceptionMessage('Cannot unserialize singleton');
+
+        $fingerprint->__wakeup();
     }
 }

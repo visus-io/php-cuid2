@@ -21,6 +21,24 @@ use Visus\Cuid2\Fingerprint;
 final class SingletonBench
 {
     /**
+     * Benchmark combined singleton access for CUID generation.
+     *
+     * This simulates the singleton access pattern used during CUID generation,
+     * where both Counter and Fingerprint are accessed.
+     */
+    #[Revs(10000)]
+    #[Iterations(10)]
+    #[Warmup(2)]
+    #[Groups(['singleton', 'combined'])]
+    public function benchCombinedSingletonAccess(): void
+    {
+        // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+        $counterValue = Counter::getInstance()->getNextValue();
+        // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+        $fingerprintValue = Fingerprint::getInstance()->getValue();
+    }
+
+    /**
      * Benchmark Counter singleton getInstance() access.
      *
      * Tests the performance of accessing an already-initialized Counter singleton.
@@ -79,23 +97,5 @@ final class SingletonBench
     {
         // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
         $result = Fingerprint::getInstance()->getValue();
-    }
-
-    /**
-     * Benchmark combined singleton access for CUID generation.
-     *
-     * This simulates the singleton access pattern used during CUID generation,
-     * where both Counter and Fingerprint are accessed.
-     */
-    #[Revs(10000)]
-    #[Iterations(10)]
-    #[Warmup(2)]
-    #[Groups(['singleton', 'combined'])]
-    public function benchCombinedSingletonAccess(): void
-    {
-        // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-        $counterValue = Counter::getInstance()->getNextValue();
-        // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-        $fingerprintValue = Fingerprint::getInstance()->getValue();
     }
 }

@@ -11,6 +11,29 @@ use Visus\Cuid2\Utils;
 class UtilsTest extends TestCase
 {
     /**
+     * Provides bytes to base36 conversion test cases.
+     *
+     * @return array<string, array<string>>
+     */
+    public static function bytesToBase36Provider(): array
+    {
+        return [
+            'empty string' => ['', '0'],
+            'single zero byte' => ["\x00", '0'],
+            'single byte 0x01' => ["\x01", '1'],
+            'single byte 0xff' => ["\xff", '73'],
+            'two bytes' => ["\x01\x00", '74'],
+            'exactly 4 bytes (one limb)' => ["\xde\xad\xbe\xef", '1ps9wxb'],
+            '4 bytes all 0xff' => ["\xff\xff\xff\xff", '1z141z3'],
+            '5 bytes (partial second limb)' => ["\x01\xde\xad\xbe\xef", '3otdywf'],
+            'leading zero byte' => ["\x00\x01\x02\x03\x04", 'a2f44'],
+            '7 bytes' => ["\x01\x02\x03\x04\x05\x06\x07", '2sk3zitmo7'],
+            'all zero bytes (4)' => ["\x00\x00\x00\x00", '0'],
+            'all zero bytes (5)' => ["\x00\x00\x00\x00\x00", '0'],
+        ];
+    }
+
+    /**
      * Provides hex to base36 conversion test cases.
      *
      * @return array<string, array<string>>
@@ -57,6 +80,65 @@ class UtilsTest extends TestCase
         ];
     }
 
+    #[DataProvider('bytesToBase36Provider')]
+    public function testBytesToBase36Conversion(string $bytes, string $expected): void
+    {
+        $result = Utils::bytesToBase36($bytes);
+
+        $this->assertSame($expected, $result);
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-z]+$/',
+            $result,
+            'Result should only contain base36 characters (0-9, a-z)'
+        );
+    }
+
+    public function testBytesToBase36ConsistencyAcrossMultipleCalls(): void
+    {
+        $bytes = "\xde\xad\xbe\xef\x01\x02\x03";
+
+        $result1 = Utils::bytesToBase36($bytes);
+        $result2 = Utils::bytesToBase36($bytes);
+        $result3 = Utils::bytesToBase36($bytes);
+
+        $this->assertSame($result1, $result2);
+        $this->assertSame($result1, $result3);
+    }
+
+    public function testBytesToBase36ProducesUniqueOutputsForDifferentInputs(): void
+    {
+        $results = [];
+
+        for ($i = 0; $i < 16; $i++) {
+            $results[$i] = Utils::bytesToBase36(chr($i) . "\xaa\xbb\xcc");
+        }
+
+        $this->assertCount(16, array_unique($results));
+    }
+
+    public function testBytesToBase36WithAllOnesShaSizedInput(): void
+    {
+        $bytes = str_repeat("\xff", 64);
+
+        $expected = '14plki42mdv1mt36i2rnak3ginnt5vcx207hpuf9x0vj6i1i7h29nu12wls3ulfv1yyabi94ua3wauamsxz4snwv27fya3' .
+            '6hqdj3';
+
+        $this->assertSame($expected, Utils::bytesToBase36($bytes));
+    }
+
+    public function testBytesToBase36WithShaSizedInput(): void
+    {
+        $bytes = '';
+
+        for ($i = 0; $i < 64; $i++) {
+            $bytes .= chr($i);
+        }
+
+        $expected = 't7kvrsfsjjwph1f4gqgcecxocdfpubt5wcoumebgxz0m2b8gqr37kur1qg14lvq4t8sgys5d7lu2fe0g3q9pjlr0ws9mmblr';
+
+        $this->assertSame($expected, Utils::bytesToBase36($bytes));
+    }
+
     #[DataProvider('hexToBase36Provider')]
     public function testHexToBase36Conversion(string $hex, string $expected): void
     {
@@ -70,19 +152,25 @@ class UtilsTest extends TestCase
         );
     }
 
-    public function testHexToBase36ReturnsBase36Characters(): void
+    public function testHexToBase36ConsistencyAcrossMultipleCalls(): void
     {
-        $testCases = ['1', 'a', 'ff', '100', 'abc123', 'deadbeef'];
+        $hex = '123456789abcdef';
 
-        foreach ($testCases as $hex) {
-            $result = Utils::hexToBase36($hex);
+        $result1 = Utils::hexToBase36($hex);
+        $result2 = Utils::hexToBase36($hex);
+        $result3 = Utils::hexToBase36($hex);
 
-            $this->assertMatchesRegularExpression(
-                '/^[0-9a-z]+$/',
-                $result,
-                "Result for hex '{$hex}' should only contain base36 characters"
-            );
-        }
+        $this->assertSame($result1, $result2);
+        $this->assertSame($result1, $result3);
+    }
+
+    #[DataProvider('invalidHexCharactersProvider')]
+    public function testHexToBase36HandlesInvalidCharactersGracefully(string $hex, string $_expected): void
+    {
+        // Invalid characters are treated as 0 based on the match default case
+        $result = Utils::hexToBase36($hex);
+
+        $this->assertMatchesRegularExpression('/^[0-9a-z]*$/', $result);
     }
 
     public function testHexToBase36IsCaseInsensitive(): void
@@ -95,16 +183,14 @@ class UtilsTest extends TestCase
         $this->assertSame($lowercase, $mixedCase);
     }
 
-    public function testHexToBase36ConsistencyAcrossMultipleCalls(): void
+    public function testHexToBase36ProducesShorterStrings(): void
     {
-        $hex = '123456789abcdef';
+        // Base36 should generally produce shorter strings than hex for large values
+        $longHex = str_repeat('f', 64); // 64 hex chars
+        $base36Result = Utils::hexToBase36($longHex);
 
-        $result1 = Utils::hexToBase36($hex);
-        $result2 = Utils::hexToBase36($hex);
-        $result3 = Utils::hexToBase36($hex);
-
-        $this->assertSame($result1, $result2);
-        $this->assertSame($result1, $result3);
+        // Base36 is more compact than base16, so result should be shorter
+        $this->assertLessThan(strlen($longHex), strlen($base36Result));
     }
 
     public function testHexToBase36ProducesUniqueOutputsForDifferentInputs(): void
@@ -125,32 +211,19 @@ class UtilsTest extends TestCase
         );
     }
 
-    #[DataProvider('invalidHexCharactersProvider')]
-    public function testHexToBase36HandlesInvalidCharactersGracefully(string $hex, string $_expected): void
+    public function testHexToBase36ReturnsBase36Characters(): void
     {
-        // Invalid characters are treated as 0 based on the match default case
-        $result = Utils::hexToBase36($hex);
+        $testCases = ['1', 'a', 'ff', '100', 'abc123', 'deadbeef'];
 
-        $this->assertMatchesRegularExpression('/^[0-9a-z]*$/', $result);
-    }
+        foreach ($testCases as $hex) {
+            $result = Utils::hexToBase36($hex);
 
-    public function testHexToBase36WithSequentialValues(): void
-    {
-        // Test that sequential hex values produce sequential patterns
-        $results = [];
-        for ($i = 0; $i <= 15; $i++) {
-            $hex = dechex($i);
-            $results[$hex] = Utils::hexToBase36($hex);
+            $this->assertMatchesRegularExpression(
+                '/^[0-9a-z]+$/',
+                $result,
+                "Result for hex '{$hex}' should only contain base36 characters"
+            );
         }
-
-        // Verify they're all unique
-        $this->assertCount(16, array_unique($results));
-
-        // Verify basic conversions
-        $this->assertSame('0', Utils::hexToBase36('0'));
-        $this->assertSame('1', Utils::hexToBase36('1'));
-        $this->assertSame('a', Utils::hexToBase36('a'));
-        $this->assertSame('f', Utils::hexToBase36('f'));
     }
 
     public function testHexToBase36WithPowersOfTwo(): void
@@ -173,13 +246,22 @@ class UtilsTest extends TestCase
         }
     }
 
-    public function testHexToBase36ProducesShorterStrings(): void
+    public function testHexToBase36WithSequentialValues(): void
     {
-        // Base36 should generally produce shorter strings than hex for large values
-        $longHex = str_repeat('f', 64); // 64 hex chars
-        $base36Result = Utils::hexToBase36($longHex);
+        // Test that sequential hex values produce sequential patterns
+        $results = [];
+        for ($i = 0; $i <= 15; $i++) {
+            $hex = dechex($i);
+            $results[$hex] = Utils::hexToBase36($hex);
+        }
 
-        // Base36 is more compact than base16, so result should be shorter
-        $this->assertLessThan(strlen($longHex), strlen($base36Result));
+        // Verify they're all unique
+        $this->assertCount(16, array_unique($results));
+
+        // Verify basic conversions
+        $this->assertSame('0', Utils::hexToBase36('0'));
+        $this->assertSame('1', Utils::hexToBase36('1'));
+        $this->assertSame('a', Utils::hexToBase36('a'));
+        $this->assertSame('f', Utils::hexToBase36('f'));
     }
 }

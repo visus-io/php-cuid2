@@ -39,6 +39,32 @@ composer dev:benchmark           # PhpBench suite
 - Write accurate PHPDoc types. PHPStan validates these types (`treatPhpDocTypesAsCertain: false`).
 - Write a comment only to explain a non-obvious invariant or workaround. Do not write a comment that restates what the code does.
 
+## Member Order
+
+Order class members by kind, then by visibility, then alphabetically. This is a
+mechanical rule — apply it exactly, do not reorder by "logical flow" or
+call-before-use.
+
+**Default pattern**, for any class not covered by the test pattern below:
+
+1. Constants
+2. Properties
+3. Constructor (`__construct`)
+4. Other magic methods (`__destruct`, `__clone`, `__wakeup`, `__toString`, etc.)
+5. Methods
+
+Within each kind, order `public` before `protected` before `private`. Within each
+visibility group, static members come before instance members. Within that, sort
+alphabetically by name (case-sensitive).
+
+**Test/benchmark pattern**, for PHPUnit test classes and PhpBench benchmark classes:
+
+1. Setup/teardown methods (`setUp`, `tearDown`, or a method referenced by PhpBench's
+   `#[BeforeMethods]`/`#[AfterMethods]`)
+2. Everything else (properties, data/param providers, helper methods) — same
+   kind/visibility/alphabetical rule as the default pattern
+3. Test or benchmark methods (`test*` / `bench*`) last, sorted alphabetically
+
 ## Testing
 
 - This project enforces 100% line and branch coverage. Untested code fails CI.
