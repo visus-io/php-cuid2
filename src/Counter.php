@@ -85,20 +85,6 @@ final class Counter
     }
 
     /**
-     * Prevents cloning of the singleton instance.
-     *
-     * Cloning would break the singleton pattern and could lead to inconsistent counter
-     * states, potentially causing CUID collisions. This method is intentionally private
-     * and empty to prevent cloning attempts.
-     *
-     * @codeCoverageIgnore
-     */
-    private function __clone(): void
-    {
-        // Prevent cloning
-    }
-
-    /**
      * Prevents unserialization of the singleton instance.
      *
      * Unserializing would create a new instance with a potentially outdated counter value,
@@ -110,6 +96,20 @@ final class Counter
     public function __wakeup(): void
     {
         throw new InvalidOperationException('Cannot unserialize singleton');
+    }
+
+    /**
+     * Prevents cloning of the singleton instance.
+     *
+     * Cloning would break the singleton pattern and could lead to inconsistent counter
+     * states, potentially causing CUID collisions. This method is intentionally private
+     * and empty to prevent cloning attempts.
+     *
+     * @codeCoverageIgnore
+     */
+    private function __clone(): void
+    {
+        // Prevent cloning
     }
 
     /**

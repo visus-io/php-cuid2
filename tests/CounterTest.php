@@ -38,17 +38,6 @@ class CounterTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetNextValueReturnsInteger(): void
-    {
-        $counter = Counter::getInstance();
-        $value = $counter->getNextValue();
-
-        $this->assertGreaterThanOrEqual(0, $value);
-    }
-
-    /**
-     * @throws Exception
-     */
     public function testGetNextValueIncrementsSequentially(): void
     {
         $counter = Counter::getInstance();
@@ -59,6 +48,17 @@ class CounterTest extends TestCase
 
         $this->assertEquals($value1 + 1, $value2);
         $this->assertEquals($value2 + 1, $value3);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetNextValueReturnsInteger(): void
+    {
+        $counter = Counter::getInstance();
+        $value = $counter->getNextValue();
+
+        $this->assertGreaterThanOrEqual(0, $value);
     }
 
     /**
@@ -103,19 +103,6 @@ class CounterTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testWakeupThrowsException(): void
-    {
-        $counter = Counter::getInstance();
-
-        $this->expectException(InvalidOperationException::class);
-        $this->expectExceptionMessage('Cannot unserialize singleton');
-
-        $counter->__wakeup();
-    }
-
-    /**
-     * @throws Exception
-     */
     public function testInitialValueIsRandom(): void
     {
         // Create multiple instances (by resetting singleton) and verify they start with different values
@@ -148,5 +135,18 @@ class CounterTest extends TestCase
 
         // Should be the same instance, so value2 should be value1 + 1
         $this->assertEquals($value1 + 1, $value2);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testWakeupThrowsException(): void
+    {
+        $counter = Counter::getInstance();
+
+        $this->expectException(InvalidOperationException::class);
+        $this->expectExceptionMessage('Cannot unserialize singleton');
+
+        $counter->__wakeup();
     }
 }

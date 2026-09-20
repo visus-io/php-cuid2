@@ -23,73 +23,32 @@ use Visus\Cuid2\Cuid2;
 final class ValidationBench
 {
     /**
-     * Benchmark validation of valid CUIDs without expected length.
+     * Set up long string for validation benchmark.
+     */
+    public function setUpLongString(): void
+    {
+        $this->longString = str_repeat('a', 100);
+    }
+
+    /**
+     * Long invalid string for edge case testing.
+     */
+    private string $longString;
+
+    /**
+     * Provides invalid CUID strings.
      *
-     * @param array{cuid: string} $params
+     * @return iterable<string, array{cuid: string}>
      */
-    #[ParamProviders('provideValidCuids')]
-    #[Revs(10000)]
-    #[Iterations(10)]
-    #[Warmup(2)]
-    #[Groups(['validation', 'valid'])]
-    public function benchValidateValidCuid(array $params): bool
+    public function provideInvalidCuids(): iterable
     {
-        return Cuid2::isValid($params['cuid']);
-    }
-
-    /**
-     * Benchmark validation of valid CUIDs with expected length.
-     *
-     * @param array{cuid: string, length: int} $params
-     */
-    #[ParamProviders('provideValidCuidsWithLength')]
-    #[Revs(10000)]
-    #[Iterations(10)]
-    #[Warmup(2)]
-    #[Groups(['validation', 'valid', 'strict'])]
-    public function benchValidateValidCuidStrictLength(array $params): bool
-    {
-        return Cuid2::isValid($params['cuid'], $params['length']);
-    }
-
-    /**
-     * Benchmark validation of invalid CUIDs.
-     *
-     * @param array{cuid: string} $params
-     */
-    #[ParamProviders('provideInvalidCuids')]
-    #[Revs(10000)]
-    #[Iterations(10)]
-    #[Warmup(2)]
-    #[Groups(['validation', 'invalid'])]
-    public function benchValidateInvalidCuid(array $params): bool
-    {
-        return Cuid2::isValid($params['cuid']);
-    }
-
-    /**
-     * Benchmark validation of empty string.
-     */
-    #[Revs(10000)]
-    #[Iterations(10)]
-    #[Warmup(2)]
-    #[Groups(['validation', 'invalid', 'edge'])]
-    public function benchValidateEmptyString(): bool
-    {
-        return Cuid2::isValid('');
-    }
-
-    /**
-     * Benchmark validation of very long string.
-     */
-    #[BeforeMethods('setUpLongString')]
-    #[Revs(10000)]
-    #[Iterations(10)]
-    #[Warmup(2)]
-    #[Groups(['validation', 'invalid', 'edge'])]
-    public function benchValidateLongString(): bool
-    {
-        return Cuid2::isValid($this->longString);
+        yield 'uppercase-first' => ['cuid' => 'A23456789012345678901234'];
+        yield 'uppercase-middle' => ['cuid' => 'a234567890123456789O1234'];
+        yield 'contains-dash' => ['cuid' => 'a234567890-234567890123'];
+        yield 'contains-underscore' => ['cuid' => 'a2345678_01234567890123'];
+        yield 'contains-special' => ['cuid' => 'a23456789@1234567890123'];
+        yield 'starts-with-number' => ['cuid' => '123456789012345678901234'];
+        yield 'too-short' => ['cuid' => 'abc'];
     }
 
     /**
@@ -119,31 +78,72 @@ final class ValidationBench
     }
 
     /**
-     * Provides invalid CUID strings.
-     *
-     * @return iterable<string, array{cuid: string}>
+     * Benchmark validation of empty string.
      */
-    public function provideInvalidCuids(): iterable
+    #[Revs(10000)]
+    #[Iterations(10)]
+    #[Warmup(2)]
+    #[Groups(['validation', 'invalid', 'edge'])]
+    public function benchValidateEmptyString(): bool
     {
-        yield 'uppercase-first' => ['cuid' => 'A23456789012345678901234'];
-        yield 'uppercase-middle' => ['cuid' => 'a234567890123456789O1234'];
-        yield 'contains-dash' => ['cuid' => 'a234567890-234567890123'];
-        yield 'contains-underscore' => ['cuid' => 'a2345678_01234567890123'];
-        yield 'contains-special' => ['cuid' => 'a23456789@1234567890123'];
-        yield 'starts-with-number' => ['cuid' => '123456789012345678901234'];
-        yield 'too-short' => ['cuid' => 'abc'];
+        return Cuid2::isValid('');
     }
 
     /**
-     * Long invalid string for edge case testing.
+     * Benchmark validation of invalid CUIDs.
+     *
+     * @param array{cuid: string} $params
      */
-    private string $longString;
+    #[ParamProviders('provideInvalidCuids')]
+    #[Revs(10000)]
+    #[Iterations(10)]
+    #[Warmup(2)]
+    #[Groups(['validation', 'invalid'])]
+    public function benchValidateInvalidCuid(array $params): bool
+    {
+        return Cuid2::isValid($params['cuid']);
+    }
 
     /**
-     * Set up long string for validation benchmark.
+     * Benchmark validation of very long string.
      */
-    public function setUpLongString(): void
+    #[BeforeMethods('setUpLongString')]
+    #[Revs(10000)]
+    #[Iterations(10)]
+    #[Warmup(2)]
+    #[Groups(['validation', 'invalid', 'edge'])]
+    public function benchValidateLongString(): bool
     {
-        $this->longString = str_repeat('a', 100);
+        return Cuid2::isValid($this->longString);
+    }
+
+    /**
+     * Benchmark validation of valid CUIDs without expected length.
+     *
+     * @param array{cuid: string} $params
+     */
+    #[ParamProviders('provideValidCuids')]
+    #[Revs(10000)]
+    #[Iterations(10)]
+    #[Warmup(2)]
+    #[Groups(['validation', 'valid'])]
+    public function benchValidateValidCuid(array $params): bool
+    {
+        return Cuid2::isValid($params['cuid']);
+    }
+
+    /**
+     * Benchmark validation of valid CUIDs with expected length.
+     *
+     * @param array{cuid: string, length: int} $params
+     */
+    #[ParamProviders('provideValidCuidsWithLength')]
+    #[Revs(10000)]
+    #[Iterations(10)]
+    #[Warmup(2)]
+    #[Groups(['validation', 'valid', 'strict'])]
+    public function benchValidateValidCuidStrictLength(array $params): bool
+    {
+        return Cuid2::isValid($params['cuid'], $params['length']);
     }
 }

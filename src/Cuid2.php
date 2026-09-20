@@ -9,6 +9,9 @@ use JsonSerializable;
 use OutOfRangeException;
 use Override;
 
+use const GMP_BIG_ENDIAN;
+use const GMP_MSW_FIRST;
+
 /**
  * Generates collision-resistant, URL-safe unique identifiers (CUID2).
  *
@@ -120,6 +123,16 @@ final class Cuid2 implements JsonSerializable
     }
 
     /**
+     * Returns the CUID string when the object is used in string context.
+     *
+     * @return string The cached CUID string value.
+     */
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
+    /**
      * Static factory method to generate a new CUID2.
      *
      * Convenience method equivalent to `new Cuid2($maxLength)`.
@@ -190,11 +203,12 @@ final class Cuid2 implements JsonSerializable
     }
 
     /**
-     * Returns the CUID string when the object is used in string context.
+     * Specifies data to be serialized to JSON.
      *
-     * @return string The cached CUID string value.
+     * @return string The CUID string value for JSON encoding.
      */
-    public function __toString(): string
+    #[Override]
+    public function jsonSerialize(): string
     {
         return $this->value;
     }
@@ -210,14 +224,29 @@ final class Cuid2 implements JsonSerializable
     }
 
     /**
-     * Specifies data to be serialized to JSON.
+     * Converts a raw binary digest to base36.
      *
-     * @return string The CUID string value for JSON encoding.
+     * This method uses the GMP extension when available. GMP gives much better
+     * performance. Otherwise, it calls Utils::bytesToBase36(). Both paths read the raw
+     * digest bytes directly. Neither path builds an intermediate hex string.
+     *
+     * Base36 encoding uses the digits 0-9 and the letters a-z. It has 36 characters in
+     * total. Base36 strings are shorter than hex strings. They stay URL-safe and are
+     * not case-sensitive.
+     *
+     * @param string $value Raw binary digest to convert.
+     *
+     * @return string The value encoded in base36.
      */
-    #[Override]
-    public function jsonSerialize(): string
+    private static function convert(string $value): string
     {
-        return $this->value;
+        if (extension_loaded('gmp')) {
+            $number = gmp_import($value, 1, GMP_MSW_FIRST | GMP_BIG_ENDIAN);
+
+            return gmp_strval($number, 36);
+        }
+
+        return Utils::bytesToBase36($value);
     }
 
     /**
@@ -252,14 +281,30 @@ final class Cuid2 implements JsonSerializable
     }
 
     /**
+     * Checks if a hash algorithm is supported by the current PHP installation.
+     *
+     * Results are cached in a static property to avoid repeated calls to hash_algos().
+     *
+     * @param string $algorithm Hash algorithm name to check (e.g., 'sha3-512').
+     *
+     * @return bool True if the algorithm is supported, false otherwise.
+     */
+    private static function isSupportedAlgorithm(string $algorithm): bool
+    {
+        self::$algorithmsCache ??= hash_algos();
+
+        return in_array($algorithm, self::$algorithmsCache, true);
+    }
+
+    /**
      * Renders the CUID2 by hashing all components and converting to base36.
      *
      * Process:
      * 1. Verifies SHA3-512 algorithm support
      * 2. Initializes SHA3-512 hash context
      * 3. Updates hash with timestamp, counter, random bytes, and fingerprint (binary data)
-     * 4. Finalizes hash to get base16 (hex) string
-     * 5. Converts base16 to base36 using GMP (preferred) or math-php fallback
+     * 4. Finalizes the hash into a raw binary digest
+     * 5. Converts the digest to base36 with GMP, or the pure-PHP fallback
      * 6. Prepends random letter prefix and truncates to requested length
      *
      * @return string The final CUID2 identifier string.
@@ -283,49 +328,10 @@ final class Cuid2 implements JsonSerializable
         hash_update($hash, $this->random);
         hash_update($hash, $this->fingerprint);
 
-        $hash = hash_final($hash);
+        $hash = hash_final($hash, true);
 
         $result = self::convert($hash);
 
         return $this->prefix . substr($result, 0, $this->length - 1);
-    }
-
-    /**
-     * Converts a base16 (hexadecimal) string to base36.
-     *
-     * Uses GMP extension if available for significantly better performance,
-     * otherwise falls back to the Utils::hexToBase36() method for arbitrary
-     * precision arithmetic.
-     *
-     * Base36 encoding uses 0-9 and a-z (36 characters total), producing shorter
-     * strings than hexadecimal while remaining URL-safe and case-insensitive.
-     *
-     * @param string $value Base16 (hexadecimal) string to convert.
-     *
-     * @return string The value encoded in base36.
-     */
-    private static function convert(string $value): string
-    {
-        if (extension_loaded('gmp')) {
-            return gmp_strval(gmp_init($value, 16), 36);
-        }
-
-        return Utils::hexToBase36($value);
-    }
-
-    /**
-     * Checks if a hash algorithm is supported by the current PHP installation.
-     *
-     * Results are cached in a static property to avoid repeated calls to hash_algos().
-     *
-     * @param string $algorithm Hash algorithm name to check (e.g., 'sha3-512').
-     *
-     * @return bool True if the algorithm is supported, false otherwise.
-     */
-    private static function isSupportedAlgorithm(string $algorithm): bool
-    {
-        self::$algorithmsCache ??= hash_algos();
-
-        return in_array($algorithm, self::$algorithmsCache, true);
     }
 }
