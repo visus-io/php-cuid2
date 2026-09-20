@@ -81,7 +81,7 @@ alphabetically by name (case-sensitive).
 
 ## Patterns to Follow
 
-- **Singleton for process-scoped state** — `Counter` and `Fingerprint` are the only classes allowed to hold static state. Each has a private constructor, a static `getInstance(): static` method, and throws on `__clone` and `__wakeup`. See [ARCHITECTURE.md](ARCHITECTURE.md).
+- **Singleton for process-scoped state** — `Counter` and `Fingerprint` are the only classes allowed to hold static state. Each has a private constructor, a static `getInstance()` method returning the concrete class, and throws on `__clone` and `__wakeup`. See [ARCHITECTURE.md](ARCHITECTURE.md).
 - **Dual code path (GMP / pure-PHP)** — `Utils::hexToBase36()` and `Utils::bytesToBase36()` must produce identical output whether `ext-gmp` is loaded or not. A change to one path requires the equivalent change to the other.
 - **Polyfill isolation** — `src/compat.php` defines `getmypid()`/`gethostname()` only when the function is missing natively. Do not add a new polyfill there without strong justification.
 

@@ -11,8 +11,8 @@ This document describes the internal design of `visus/cuid2`. It targets contrib
 3. Increment the `Counter` singleton. Read its new value.
 4. Read the `Fingerprint` singleton. The fingerprint is a hash of the hostname, the process ID, and environment data.
 5. Generate entropy with `random_bytes()`.
-6. Combine the timestamp, the counter, the fingerprint, and the entropy. Hash the combined value with SHA3-512. The result is a raw 64-byte digest. It is not a hex string.
-7. Convert the raw digest to base36 with `Utils::bytesToBase36()`.
+6. Combine the timestamp, the counter, the entropy, and the fingerprint. Hash the combined value with SHA3-512. The result is a raw 64-byte digest. It is not a hex string.
+7. Convert the raw digest to base36. Use `gmp_import()`/`gmp_strval()` when `ext-gmp` is loaded, otherwise `Utils::bytesToBase36()`. See below.
 8. Prepend the prefix to the converted hash. Truncate the result to the requested length.
 
 ## Singletons
@@ -20,7 +20,7 @@ This document describes the internal design of `visus/cuid2`. It targets contrib
 `Counter` and `Fingerprint` are process-scoped singletons.
 
 - Each singleton has a private constructor.
-- Each singleton exposes a static `getInstance(): static` method.
+- Each singleton exposes a static `getInstance()` method. The method returns the concrete class, not `static`.
 - Each singleton throws on `__clone` and on `__wakeup`.
 
 Do not introduce static state outside these two classes.

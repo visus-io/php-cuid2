@@ -64,8 +64,8 @@ Each CUID2 identifier contains several components. The library combines and hash
 3. **Counter**: The library adds a value that always increases. This prevents collisions when you generate identifiers quickly.
 4. **Fingerprint**: The library adds an identifier for the machine and the process. This identifier includes the hostname, the process ID, and environment data.
 5. **Random Data**: The library adds cryptographically secure random bytes.
-6. **Hashing**: The library combines all components and hashes them with SHA3-512.
-7. **Encoding**: The library converts the hash from base16 to base36.
+6. **Hashing**: The library combines all components and hashes them with SHA3-512. The result is a raw 64-byte digest, not a hex string.
+7. **Encoding**: The library converts the raw digest bytes directly to base36. It does not build an intermediate hex string.
 8. **Truncation**: The library trims the result to the length you request, minus the prefix.
 
 Example output: `p6p168tx2rxtgyehd3p2wz04`
@@ -87,7 +87,7 @@ composer require visus/cuid2
 - SHA3-512 hashing support. PHP 7.1 and later versions usually include this support.
 
 **Recommended:**
-- The GMP extension, for better performance. GMP makes base conversion 60 to 300 times faster.
+- The GMP extension, for better performance. GMP makes base36 conversion roughly 9 to 30 times faster, depending on the input size.
 
 ### Instance-Based Usage
 
@@ -159,21 +159,21 @@ Cuid2::isValid('a1ao2r0lve', expectedLength: 24); // false
 
 ### Performance: GMP Extension
 
-This library converts values from base16 to base36 during identifier generation. For the best performance, install and enable the [GMP extension](https://www.php.net/manual/en/intro.gmp.php). This step is **strongly recommended**.
+This library converts a raw hash digest to base36 during identifier generation. It reads the digest bytes directly and never builds an intermediate hex string, on either the GMP path or the pure-PHP fallback. For the best performance, install and enable the [GMP extension](https://www.php.net/manual/en/intro.gmp.php). This step is **strongly recommended**.
 
-**Performance Comparison** (from benchmark tests):
+**Performance Comparison** (from benchmark tests, GMP median vs. the pure-PHP `Utils::bytesToBase36()` fallback):
 
-| Hash Size | GMP Average | Pure PHP Average | Performance Gain |
-|-----------|-------------|------------------|------------------|
-| SHA3-512 (128 hex chars) | 0.81 μs | 247.77 μs | **306x faster** |
-| 64 hex chars | 0.58 μs | 78.51 μs | **135x faster** |
-| 32 hex chars | 0.47 μs | 28.08 μs | **60x faster** |
-| 16 hex chars | 0.43 μs | 11.94 μs | **28x faster** |
+| Digest Size | GMP Median | Pure PHP Median | Performance Gain |
+|-------------|------------|------------------|-------------------|
+| SHA3-512 (64 bytes) | 0.36 μs | 11.3 μs | **~31x faster** |
+| 32 bytes | 0.22 μs | 4.7 μs | **~21x faster** |
+| 16 bytes | 0.15 μs | 2.2 μs | **~15x faster** |
+| 8 bytes | 0.14 μs | 1.3 μs | **~9x faster** |
 
 **Key Takeaways:**
-- GMP makes base conversion 60 to 300 times faster.
-- Larger hashes gain more benefit from GMP. CUID2 uses SHA3-512, the largest hash in this comparison.
-- Without GMP, the library uses a pure PHP implementation instead.
+- GMP makes base36 conversion roughly 9 to 30 times faster, depending on the input size.
+- Larger digests gain more benefit from GMP. CUID2 uses SHA3-512, the largest digest in this comparison.
+- Without GMP, the library uses a pure-PHP fallback: it packs the digest into base-2³² limbs and divides them by 36⁵ per pass, extracting 5 base36 digits at a time. See [ARCHITECTURE.md](ARCHITECTURE.md) for details.
 - Both implementations produce the same results.
 
 **Installation:**
