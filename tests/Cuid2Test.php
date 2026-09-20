@@ -9,9 +9,15 @@ use OutOfRangeException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Visus\Cuid2\Cuid2;
+use Visus\Cuid2\Test\Support\ExtensionAvailability;
 
 class Cuid2Test extends TestCase
 {
+    protected function tearDown(): void
+    {
+        ExtensionAvailability::reset();
+    }
+
     /**
      * Provides invalid CUID2 strings for testing isValid method.
      *
@@ -82,6 +88,20 @@ class Cuid2Test extends TestCase
             'default length' => [24],
             'maximum length' => [32],
         ];
+    }
+
+    /**
+     * @throws OutOfRangeException|Exception
+     */
+    public function testConvertsUsingPurePhpFallbackWhenGmpIsUnavailable(): void
+    {
+        ExtensionAvailability::disable('gmp');
+
+        $cuid = new Cuid2();
+        $result = (string) $cuid;
+
+        $this->assertEquals(24, strlen($result));
+        $this->assertMatchesRegularExpression('/^[a-z][0-9a-z]*$/', $result);
     }
 
     /**

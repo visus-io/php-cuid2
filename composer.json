@@ -47,7 +47,10 @@
         "psr-4": {
             "Visus\\Cuid2\\Test\\": "tests/",
             "Visus\\Cuid2\\Test\\Benchmark\\": "tests/benchmark"
-        }
+        },
+        "files": [
+            "tests/Support/extension_loaded.php"
+        ]
     },
     "config": {
         "allow-plugins": {

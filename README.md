@@ -161,7 +161,7 @@ Cuid2::isValid('a1ao2r0lve', expectedLength: 24); // false
 
 This library converts a raw hash digest to base36 during identifier generation. It reads the digest bytes directly and never builds an intermediate hex string, on either the GMP path or the pure-PHP fallback. For the best performance, install and enable the [GMP extension](https://www.php.net/manual/en/intro.gmp.php). This step is **strongly recommended**.
 
-**Performance Comparison** (from benchmark tests, GMP median vs. the pure-PHP `Utils::bytesToBase36()` fallback):
+**Performance Comparison** (GMP median vs. the pure-PHP `Utils::bytesToBase36()` fallback):
 
 | Digest Size | GMP Median | Pure PHP Median | Performance Gain |
 |-------------|------------|------------------|-------------------|
@@ -175,6 +175,7 @@ This library converts a raw hash digest to base36 during identifier generation. 
 - Larger digests gain more benefit from GMP. CUID2 uses SHA3-512, the largest digest in this comparison.
 - Without GMP, the library uses a pure-PHP fallback: it packs the digest into base-2³² limbs and divides them by 36⁵ per pass, extracting 5 base36 digits at a time. See [ARCHITECTURE.md](ARCHITECTURE.md) for details.
 - Both implementations produce the same results.
+- These measurements are illustrative. The digest sizes differ from the ones in this repository's benchmark suite. Run `composer dev:benchmark` to measure pure-PHP timings on your own hardware.
 
 **Installation:**
 

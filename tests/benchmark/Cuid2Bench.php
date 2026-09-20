@@ -23,17 +23,17 @@ use Visus\Cuid2\Cuid2;
 final class Cuid2Bench
 {
     /**
-     * CUID instance for conversion benchmarks.
-     */
-    private Cuid2 $cuid;
-
-    /**
      * Set up CUID instance for conversion benchmarks.
      */
     public function setUp(): void
     {
         $this->cuid = new Cuid2();
     }
+
+    /**
+     * CUID instance for conversion benchmarks.
+     */
+    private Cuid2 $cuid;
 
     /**
      * Provides batch sizes for batch generation benchmarks.
