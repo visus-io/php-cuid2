@@ -8,8 +8,12 @@ use Exception;
 use OutOfRangeException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Visus\Cuid2\Cuid2;
 use Visus\Cuid2\Test\Support\ExtensionAvailability;
+use Visus\Cuid2\Utils;
+
+use function Visus\Cuid2\extension_loaded;
 
 class Cuid2Test extends TestCase
 {
@@ -96,6 +100,12 @@ class Cuid2Test extends TestCase
     public function testConvertsUsingPurePhpFallbackWhenGmpIsUnavailable(): void
     {
         ExtensionAvailability::disable('gmp');
+        $this->assertFalse(extension_loaded('gmp'));
+
+        $digest = hash('sha3-512', 'php-cuid2-pure-php-fallback-fixture', true);
+        $convert = new ReflectionMethod(Cuid2::class, 'convert');
+
+        $this->assertSame(Utils::bytesToBase36($digest), $convert->invoke(null, $digest));
 
         $cuid = new Cuid2();
         $result = (string) $cuid;
