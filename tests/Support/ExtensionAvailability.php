@@ -33,7 +33,12 @@ final class ExtensionAvailability
 
     public static function reset(): void
     {
-        foreach (array_keys(getenv()) as $name) {
+        $environment = getenv();
+        if ($environment === false) {
+            return;
+        }
+
+        foreach (array_keys($environment) as $name) {
             if (str_starts_with($name, self::ENV_PREFIX)) {
                 putenv($name);
             }
