@@ -158,6 +158,6 @@ final class Cuid2Bench
     public function benchToStringMethod(): void
     {
         // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-        $result = $this->cuid->toString();
+        $_result = $this->cuid->toString();
     }
 }
