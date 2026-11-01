@@ -33,9 +33,9 @@ final class SingletonBench
     public function benchCombinedSingletonAccess(): void
     {
         // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-        $counterValue = Counter::getInstance()->getNextValue();
+        $_counterValue = Counter::getInstance()->getNextValue();
         // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-        $fingerprintValue = Fingerprint::getInstance()->getValue();
+        $_fingerprintValue = Fingerprint::getInstance()->getValue();
     }
 
     /**
@@ -96,6 +96,6 @@ final class SingletonBench
     public function benchFingerprintGetValue(): void
     {
         // @phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-        $result = Fingerprint::getInstance()->getValue();
+        $_result = Fingerprint::getInstance()->getValue();
     }
 }
