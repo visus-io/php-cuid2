@@ -4,6 +4,6 @@
     "local>visus-io/renovate-config"
   ],
   "constraints": {
-    "php": "<8.6"
+    "php": "8.6.0"
   }
 }

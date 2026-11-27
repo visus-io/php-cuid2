@@ -106,7 +106,7 @@ jobs:
         run: composer dev:test:coverage:ci
 
       - name: Upload to SonarCloud
-        uses: SonarSource/sonarqube-scan-action@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304 # v8.4
+        uses: SonarSource/sonarqube-scan-action@70bad232163b09d998ea0707ee80c0ec80798c16 # v8.5
         env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
